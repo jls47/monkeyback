@@ -22,7 +22,7 @@ module.exports = {
 	editSong: editSong
 };
 
-getAllSongs = (req, res, next) => {
+function getAllSongs (req, res, next) {
 	db.any(`select * from songs`)
 		.then(data => {
 			res.status(200)
@@ -37,7 +37,7 @@ getAllSongs = (req, res, next) => {
 		})
 }
 
-getOneSong = (req, res, next) => {
+function getOneSong (req, res, next) {
 	let Sid = parseInt(req.params.id);
 	db.any(`select * from songs where id = ` + Sid)
 		.then(data => {
@@ -53,7 +53,7 @@ getOneSong = (req, res, next) => {
 		})
 }
 
-getSongsByArtist = (req, res, next) => {
+function getSongsByArtist (req, res, next) {
 	let artist = req.params.artist;
 	db.any(`select * from songs where artist = ` + artist)
 		.then(data => {
@@ -69,7 +69,7 @@ getSongsByArtist = (req, res, next) => {
 		})
 }
 
-getAllArtists = (req, res, next) => {
+function getAllArtists (req, res, next) {
 	db.any(`select * from artists`)
 		.then(data => {
 			res.status(200)
@@ -84,7 +84,7 @@ getAllArtists = (req, res, next) => {
 		})
 }
 
-getArtistsByGenre = (req, res, next) => {
+function getArtistsByGenre (req, res, next) {
 	let genre = req.params.genre;
 	db.any(`select * from artists where genre = ` + genre)
 		.then(data => {
@@ -100,7 +100,7 @@ getArtistsByGenre = (req, res, next) => {
 		})
 }
 
-getSongsByGenre = (req, res, next) => {
+function getSongsByGenre  (req, res, next){
 	let genre = req.params.genre;
 	db.any(`select * from songs where genre = ` + genre)
 		.then(data => {
@@ -118,7 +118,7 @@ getSongsByGenre = (req, res, next) => {
 
 //Add song, add artist if not present
 
-addSong = (req, res, next) => {
+function addSong (req, res, next){
 	console.dir(req.body);
 	db.none(`insert into songs(title, artist, genre) values('`+req.body.title+`', '`+req.body.artist+`', '`+req.body.genre+`')`)
 		.then(data => {
@@ -127,13 +127,29 @@ addSong = (req, res, next) => {
 					status: 'success',
 					message: 'post successful'
 				})
+			checkArtist(req.body.artist, req.body.genre);
+			
 		})
-		.catch(err +> {
+		.catch(err => {
 			return next(err);
 		})
 }
 
-addArtist = (name, genre) => {
+function checkArtist (name, genre) {
+	console.log(name);
+	db.any(`select * from artists where name = ` + name)
+		.then(data => {
+			present = true;
+			console.dir(data);
+			console.log('present');
+		})
+		.catch(err => {
+			console.log('nope')
+			addArtist(name, genre);
+		})
+}
+
+function addArtist (name, genre) {
 	db.none(`insert into artists(name, genre) values ('`+name+`', '`+genre+`')`)
 		.then(data => {
 			res.status(200)
@@ -147,11 +163,11 @@ addArtist = (name, genre) => {
 		})
 }
 
-addGenreToArtist = (name, genre) => {
+function addGenreToArtist (name, genre) {
 	db.none(``)
 }
 
-getArtistsBySearch = (req, res, next) => {
+function getArtistsBySearch (req, res, next) {
 	let search = req.params.search;
 	db.any(`select * from artists where name ilike '%` + search + `%'`)
 		.then(data => {
@@ -168,7 +184,9 @@ getArtistsBySearch = (req, res, next) => {
 
 }
 
-getSongsBySearch = (req, res, next) => {
+//add genre list?
+
+function getSongsBySearch (req, res, next) {
 	let search = req.params.search;
 	db.any(`select * from songs where title ilike '%` + search + `%'`)
 		.then(data => {
@@ -184,6 +202,6 @@ getSongsBySearch = (req, res, next) => {
 		})
 }
 
-editSong = (req, res, next) => {
+function editSong (req, res, next) {
 
 }
