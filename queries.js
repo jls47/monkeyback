@@ -20,6 +20,12 @@ module.exports = {
 	getArtistsBySearch: getArtistsBySearch,
 	getSongsBySearch: getSongsBySearch,
 	editSong: editSong
+	checkGenre: checkGenre,
+	addGenreToArtist: addGenreToArtist,
+	removeSong: removeSong,
+	removeArtist: removeArtist,
+	removeAristGenre: removeArtistGenre
+
 };
 
 function getAllSongs (req, res, next) {
@@ -163,15 +169,6 @@ function addArtist (name, genre) {
 		})
 }
 
-function checkGenre (artist, genre) {
-	db.any(`select * from artists`)
-}
-
-function addGenreToArtist (name, genre, genreList) {
-	db.none(`update artists set genre = ` + genreList)
-
-}
-
 function getArtistsBySearch (req, res, next) {
 	let search = req.params.search;
 	db.any(`select * from artists where name ilike '%` + search + `%'`)
@@ -209,4 +206,21 @@ function getSongsBySearch (req, res, next) {
 
 function editSong (req, res, next) {
 
+}
+
+function checkGenre (artist, genre) {
+	db.any(`select * from artists`)
+}
+
+function addGenreToArtist (name, genre, genreList) {
+	db.none(`update artists set genre = ` + genreList)
+
+}
+
+function removeSong (req, res, next){
+
+}
+
+function removeArtistGenre (artist, genre){
+	
 }
