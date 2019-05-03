@@ -19,13 +19,12 @@ module.exports = {
 	addSong: addSong,
 	getArtistsBySearch: getArtistsBySearch,
 	getSongsBySearch: getSongsBySearch,
-	editSong: editSong
+	editSong: editSong,
 	checkGenre: checkGenre,
 	addGenreToArtist: addGenreToArtist,
 	removeSong: removeSong,
 	removeArtist: removeArtist,
 	removeAristGenre: removeArtistGenre
-
 };
 
 function getAllSongs (req, res, next) {
@@ -134,7 +133,6 @@ function addSong (req, res, next){
 					message: 'post successful'
 				})
 			checkArtist(req.body.artist, req.body.genre);
-			
 		})
 		.catch(err => {
 			return next(err);
@@ -204,8 +202,26 @@ function getSongsBySearch (req, res, next) {
 		})
 }
 
-function editSong (req, res, next) {
+//Do we even need genre stuff?
 
+
+//if editing in new artist then add artist
+//if editing removes an artist then remove artist
+//also check for duplicates
+function editSong (req, res, next) {
+	console.log(req.body);
+	console.log(req.params);
+	db.none(`update songs set title = '` + req.body.title + `', artist = '` + req.body.artist + `', genre = '` + req.body.genre + `' where id = '` + req.params.id+`'`)
+		.then(data => {
+			res.status(200)
+				.json({
+					status: 'success',
+					message: 'update successful'
+				})
+		})
+		.catch(err => {
+			return next(err);
+		})
 }
 
 function checkGenre (artist, genre) {
@@ -214,10 +230,13 @@ function checkGenre (artist, genre) {
 
 function addGenreToArtist (name, genre, genreList) {
 	db.none(`update artists set genre = ` + genreList)
-
 }
 
 function removeSong (req, res, next){
+
+}
+
+function removeArtist (artist){
 
 }
 
