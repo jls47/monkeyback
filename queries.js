@@ -208,6 +208,7 @@ function getSongsBySearch (req, res, next) {
 //if editing in new artist then add artist
 //if editing removes an artist then remove artist
 //also check for duplicates
+
 function editSong (req, res, next) {
 	console.log(req.body);
 	console.log(req.params);

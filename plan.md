@@ -17,7 +17,7 @@ VISION FOR BOTH
 
 Front
 -Main page has search bar and recently added
--All pages will have the search bar except for adding the songs
+-All pages will have the search button that expands into a bar except for song adding
 -Adding songs needs a single login from a single login page
 -Selecting genre-dropdown with "add new"?
 -Are genres even needed?
