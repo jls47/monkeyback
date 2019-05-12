@@ -234,7 +234,18 @@ function addGenreToArtist (name, genre, genreList) {
 }
 
 function removeSong (req, res, next){
-
+	console.log(`remove from songs where id = ` + req.body.id);
+	db.result(`delete from songs where id = ` + req.body.id)
+		.then((result) => {
+			res.status(200)
+				.json({
+					status: 'success',
+					message: 'Song removed'
+				});
+		})
+		.catch((err) => {
+			return next(err);
+		})
 }
 
 function removeArtist (artist){
