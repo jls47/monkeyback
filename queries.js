@@ -13,18 +13,13 @@ module.exports = {
 	getAllSongs: getAllSongs,
 	getOneSong: getOneSong,
 	getSongsByArtist: getSongsByArtist,
-	getSongsByGenre: getSongsByGenre,
 	getAllArtists: getAllArtists,
-	getArtistsByGenre: getArtistsByGenre,
 	addSong: addSong,
 	getArtistsBySearch: getArtistsBySearch,
 	getSongsBySearch: getSongsBySearch,
 	editSong: editSong,
-	checkGenre: checkGenre,
-	addGenreToArtist: addGenreToArtist,
 	removeSong: removeSong,
 	removeArtist: removeArtist,
-	removeAristGenre: removeArtistGenre
 };
 
 function getAllSongs (req, res, next) {
@@ -89,57 +84,25 @@ function getAllArtists (req, res, next) {
 		})
 }
 
-function getArtistsByGenre (req, res, next) {
-	let genre = req.params.genre;
-	db.any(`select * from artists where genre = ` + genre)
-		.then(data => {
-			res.status(200)
-				.json({
-					status: 'success',
-					data: data,
-					message: 'retrieval successful'
-				})
-		})
-		.catch(err => {
-			return next(err);
-		})
-}
-
-function getSongsByGenre  (req, res, next){
-	let genre = req.params.genre;
-	db.any(`select * from songs where genre = ` + genre)
-		.then(data => {
-			res.status(200)
-				.json({
-					status: 'success',
-					data: data,
-					message: 'retrieval successful'
-				})
-		})
-		.catch(err => {
-			return next(err);
-		})
-}
-
 //Add song, add artist if not present
 
 function addSong (req, res, next){
 	console.dir(req.body);
-	db.none(`insert into songs(title, artist, genre) values('`+req.body.title+`', '`+req.body.artist+`', '`+req.body.genre+`')`)
+	db.none(`insert into songs(title, artist) values('`+req.body.title+`', '`+req.body.artist+`')`)
 		.then(data => {
 			res.status(200)
 				.json({
 					status: 'success',
 					message: 'post successful'
 				})
-			checkArtist(req.body.artist, req.body.genre);
+			checkArtist(req.body.artist);
 		})
 		.catch(err => {
 			return next(err);
 		})
 }
 
-function checkArtist (name, genre) {
+function checkArtist (name) {
 	console.log(name);
 	db.any(`select * from artists where name = ` + name)
 		.then(data => {
@@ -149,12 +112,12 @@ function checkArtist (name, genre) {
 		})
 		.catch(err => {
 			console.log('nope')
-			addArtist(name, genre);
+			addArtist(name);
 		})
 }
 
-function addArtist (name, genre) {
-	db.none(`insert into artists(name, genre) values ('`+name+`', '`+genre+`')`)
+function addArtist (name) {
+	db.none(`insert into artists(name) values ('`+name+`')`)
 		.then(data => {
 			res.status(200)
 				.json({
@@ -212,7 +175,7 @@ function getSongsBySearch (req, res, next) {
 function editSong (req, res, next) {
 	console.log(req.body);
 	console.log(req.params);
-	db.none(`update songs set title = '` + req.body.title + `', artist = '` + req.body.artist + `', genre = '` + req.body.genre + `' where id = '` + req.params.id+`'`)
+	db.none(`update songs set title = '` + req.body.title + `', artist = '` + req.body.artist + `' where id = '` + req.params.id+`'`)
 		.then(data => {
 			res.status(200)
 				.json({
@@ -223,14 +186,6 @@ function editSong (req, res, next) {
 		.catch(err => {
 			return next(err);
 		})
-}
-
-function checkGenre (artist, genre) {
-	db.any(`select * from artists`)
-}
-
-function addGenreToArtist (name, genre, genreList) {
-	db.none(`update artists set genre = ` + genreList)
 }
 
 function removeSong (req, res, next){
@@ -256,8 +211,4 @@ function removeSong (req, res, next){
 
 function removeArtist (artist){
 
-}
-
-function removeArtistGenre (artist, genre){
-	
 }

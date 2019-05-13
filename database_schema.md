@@ -1,7 +1,7 @@
 Database Songs
-create table songs(ID SERIAL PRIMARY KEY not null unique, title VARCHAR not null, artist VARCHAR not null, genre VARCHAR);
+create table songs(ID SERIAL PRIMARY KEY not null unique, title VARCHAR not null, artist VARCHAR not null);
 
-insert into songs(title, artist, genre) values ('Surrender', 'Cheap Trick', 'Power Pop'), ('Scenario', 'A Tribe Called Quest', 'Hip Hop');
+insert into songs(title, artist) values ('Surrender', 'Cheap Trick'), ('Scenario', 'A Tribe Called Quest');
 
 insert 
 

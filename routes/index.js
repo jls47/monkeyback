@@ -16,8 +16,6 @@ router.get('/api/songs/a/:artist', db.getSongsByArtist);
 router.put('/api/songs/:id', db.editSong);
 router.get('/api/artists', db.getAllArtists);
 router.get('/api/artists/s/:search', db.getArtistsBySearch);
-router.get('/api/artists/g/:genre', db.getArtistsByGenre);
-router.get('/api/songs/g/:genre', db.getSongsByGenre);
 router.delete('/api/songs/', db.removeSong);
 
 
