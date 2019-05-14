@@ -19,8 +19,7 @@ module.exports = {
 	getArtistsBySearch: getArtistsBySearch,
 	getSongsBySearch: getSongsBySearch,
 	editSong: editSong,
-	removeSong: removeSong,
-	removeArtist: removeArtist,
+	removeSong: removeSong
 };
 
 function getAllSongs (req, res, next) {
@@ -120,7 +119,7 @@ function addSong (res, next, title, artist){
 					status: 'success',
 					message: 'post successful'
 				})
-			checkArtist(req.body.artist);
+			checkArtist(artist);
 		})
 		.catch(err => {
 			return next(err);
@@ -133,13 +132,17 @@ function checkArtist (name) {
 	console.log(name);
 	db.any(`select * from artists where name = '` + name + `'`)
 		.then(data => {
-			present = true;
-			console.dir(data);
-			console.log('present');
+			if(data.length == 0){
+				addArtist(name);
+			}else{
+				present = true;
+				console.dir(data);
+				console.log('present');
+			}
 		})
 		.catch(err => {
 			console.log(err)
-			addArtist(name);
+			return(err);
 		})
 }
 
@@ -214,6 +217,7 @@ function editSong (req, res, next) {
 		})
 }
 
+//Do find artist by song id then remove?  Shit idk
 function removeSong (req, res, next){
 	console.log(req.body);
 	var statuses = [];
