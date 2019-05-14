@@ -5,8 +5,8 @@ const options = {
 };
 
 const pgp = require('pg-promise')(options);
-const connectionString = 'postgres://vuwumxkxalrbzq:b711534d337515a892fb006d00d28d9e4b7ea23b7beea0a0a29f82dfc0f85183@ec2-174-129-10-235.compute-1.amazonaws.com:5432/datgbuhvg1etav';
-//const connectionString = 'postgres://monkey:monkey@localhost:5432/songs'
+//	const connectionString = 'postgres://vuwumxkxalrbzq:b711534d337515a892fb006d00d28d9e4b7ea23b7beea0a0a29f82dfc0f85183@ec2-174-129-10-235.compute-1.amazonaws.com:5432/datgbuhvg1etav';
+const connectionString = 'postgres://monkey:monkey@localhost:5432/songs'
 const db = pgp(connectionString);
 
 module.exports = {
@@ -15,6 +15,7 @@ module.exports = {
 	getSongsByArtist: getSongsByArtist,
 	getAllArtists: getAllArtists,
 	addSong: addSong,
+	checkSong: checkSong,
 	getArtistsBySearch: getArtistsBySearch,
 	getSongsBySearch: getSongsBySearch,
 	editSong: editSong,
@@ -53,6 +54,8 @@ function getOneSong (req, res, next) {
 		})
 }
 
+
+//refactor the other thing into there
 function getSongsByArtist (req, res, next) {
 	let artist = req.params.artist;
 	db.any(`select * from songs where artist = ` + artist)
@@ -85,10 +88,32 @@ function getAllArtists (req, res, next) {
 }
 
 //Add song, add artist if not present
+//add responses to functions that need it
 
-function addSong (req, res, next){
+function checkSong(req, res, next){
 	console.dir(req.body);
-	db.none(`insert into songs(title, artist) values('`+req.body.title+`', '`+req.body.artist+`')`)
+	console.log(`select * from songs where title = '` + req.body.title+`' and artist = '`+req.body.artist+`'`)
+	db.any(`select * from songs where title = '` + req.body.title+`' and artist = '`+req.body.artist+`'`)
+		.then(data => {
+			if(data.length == 0){
+				console.log('wtf')
+				addSong(res, next, req.body.title, req.body.artist);
+			}else{
+				res.status(200)
+					.json({
+						status: 'nope',
+						message: 'duplicate'
+					})
+			}
+		})
+		.catch(err => {
+			return next(err);
+		})
+
+}
+
+function addSong (res, next, title, artist){
+	db.none(`insert into songs(title, artist) values('`+title+`', '`+artist+`')`)
 		.then(data => {
 			res.status(200)
 				.json({
@@ -102,16 +127,18 @@ function addSong (req, res, next){
 		})
 }
 
+
+//Double check that data function.  Allows adding duplicates right now.
 function checkArtist (name) {
 	console.log(name);
-	db.any(`select * from artists where name = ` + name)
+	db.any(`select * from artists where name = '` + name + `'`)
 		.then(data => {
 			present = true;
 			console.dir(data);
 			console.log('present');
 		})
 		.catch(err => {
-			console.log('nope')
+			console.log(err)
 			addArtist(name);
 		})
 }
@@ -170,7 +197,6 @@ function getSongsBySearch (req, res, next) {
 
 //if editing in new artist then add artist
 //if editing removes an artist then remove artist
-//also check for duplicates
 
 function editSong (req, res, next) {
 	console.log(req.body);
@@ -189,26 +215,65 @@ function editSong (req, res, next) {
 }
 
 function removeSong (req, res, next){
+	console.log(req.body);
 	var statuses = [];
 	var pass = 0;
 	var ids = req.body.id.split(',');
 	for(var id of req.body.id.split(',')){
 		console.log(id);
-		console.log(`delete from songs where id = ` + id)
+		console.log(`delete from songs where id = ` + id);
+		findArtistBySongId(id);
 		db.result(`delete from songs where id = ` + id)
 			.then((result) => {
-				statuses.push({id: 'Song removed'})
+				statuses.push({id: 'Song removed'});
 			})
 			.catch((err) => {
 				statuses.push({id: err});
 			})
 		pass += 1;
-	}
-	if(pass >= ids.length){
-		res.status(200).json(statuses);
+		if(pass >= ids.length){
+			res.status(200).json(statuses);
+		}
 	}
 }
 
-function removeArtist (artist){
+//maybe if number of songs <= 1?  test!
 
+function findArtistBySongId (id){
+	console.log(id);
+	db.any(`select * from songs where id = ` + id)
+		.then(data => {
+			console.log('finding artist');
+			console.log(data);
+			checkArtistHasSongs(data[0].artist);
+		})
+		.catch(err => {
+			return next(err);
+		})
+}
+
+function removeArtist (artist){
+	statuses = [];
+	db.result(`delete from artists where name = '`+artist+`'`)
+		.then(result => {
+			console.log(result);
+			statuses.push({artist: 'artist removed'});
+		})
+		.catch(err => {
+			statuses.push({artist: err});
+		})
+}
+
+//refactor at some point into the other function
+function checkArtistHasSongs(artist){
+	console.log(artist);
+	db.any(`select * from songs where artist = '` + artist + `'`)
+		.then(data => {
+			if(data.length <= 1){
+				removeArtist(artist);
+			}
+		})
+		.catch(err => {
+			return next(err);
+		})
 }
