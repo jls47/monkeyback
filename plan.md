@@ -10,6 +10,7 @@ Front
 
 Back
 -work on artist deletion when you have a chance
+-Artist deletion should be as such: every hour, if there are artists with no songs, delete them
 
 
 VISION FOR BOTH
@@ -25,9 +26,11 @@ Front
 -Black and white just like the rest of the website?
 
 FRONT END COMPONENTS
+Main
 Search button
 Search component
 Search results
+Navbar
 Login button
 Login page
 Logout button
@@ -36,11 +39,22 @@ Writing form
 Editing form
 Delete song(s)
 Delete artist(s)
-SONG UPLOAD PORTION
-
+Delete all selected?
 State
 
+HOW WILL IT BE LAID OUT?
+MAIN > NAV > LOGIN & DROPDOWN & SEARCH
+MAIN > RESULTS > EDIT & DELETE & DELETE ALL SELECTED (two buttons off to the right side)
+
+
+
+
 WHAT WILL COMPONENTS HAVE?
+
+NAVBAR
+>Search button, logo back to monkey site, login button
+>When logged in, dropdown for other functions
+
 SEARCH BUTTON
 >Brings up the search component in a modal which is closed upon clicking "search"
 
@@ -61,13 +75,19 @@ LOGIN PAGE
 LOGOUT BUTTON
 >Resets state to make admin logged out.
 
+DELETE ALL SELECTED
+>Simple button that passes a delete request with all ids of everything
+
 FRONT PAGE
+>If state = "frontpage" do default 5 most recent and message
 >Pseudo results screen with a removable message.  Add message about cookies.
 >Most recently added, need timestamp.
 
 WHAT WILL STATE HANDLE?
 >logged in or out
->
+>editing or not
+>deleting or not
+>if deleting, will store 
 
 Back
 -Variety of API calls

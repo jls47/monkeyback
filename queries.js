@@ -226,13 +226,12 @@ function removeSong (req, res, next){
 	for(var id of req.body.id.split(',')){
 		console.log(id);
 		console.log(`delete from songs where id = ` + id);
-		findArtistBySongId(id);
 		db.result(`delete from songs where id = ` + id)
 			.then((result) => {
-				statuses.push({id: 'Song removed'});
+				console.log({id: 'Song removed'});
 			})
 			.catch((err) => {
-				statuses.push({id: err});
+				console.log({id: err});
 			})
 		pass += 1;
 		if(pass >= ids.length){
@@ -249,7 +248,7 @@ function findArtistBySongId (id){
 		.then(data => {
 			console.log('finding artist');
 			console.log(data);
-			checkArtistHasSongs(data[0].artist);
+			checkArtistHasSongs(data[0].artist, id);
 		})
 		.catch(err => {
 			return next(err);
@@ -260,7 +259,7 @@ function removeArtist (artist){
 	statuses = [];
 	db.result(`delete from artists where name = '`+artist+`'`)
 		.then(result => {
-			console.log(result);
+			console.log("Removing artist: " + artist);
 			statuses.push({artist: 'artist removed'});
 		})
 		.catch(err => {
@@ -270,10 +269,11 @@ function removeArtist (artist){
 
 //refactor at some point into the other function
 function checkArtistHasSongs(artist){
-	console.log(artist);
 	db.any(`select * from songs where artist = '` + artist + `'`)
 		.then(data => {
-			if(data.length <= 1){
+			console.log("Checking");
+			console.log(data);
+			if(data.length < 1){
 				removeArtist(artist);
 			}
 		})
@@ -281,3 +281,19 @@ function checkArtistHasSongs(artist){
 			return next(err);
 		})
 }
+
+function checkBlankArtists(){
+	db.any(`select * from artists`)
+		.then(data => {
+			console.log(data);
+			for(item in data){
+				checkArtistHasSongs(data[item].name);
+			}
+		})
+		.catch(err => {
+			console.log(err);
+		})
+}
+checkBlankArtists();
+setInterval(function(){checkBlankArtists()}, 60 * 60 * 1000);
+//Every hour, checks for blank artists and erases them.
