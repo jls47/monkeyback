@@ -10,6 +10,7 @@ const connectionString = 'postgres://vuwumxkxalrbzq:b711534d337515a892fb006d00d2
 const db = pgp(connectionString);
 
 module.exports = {
+	getMostRecentSongs: getMostRecentSongs,
 	getAllSongs: getAllSongs,
 	getOneSong: getOneSong,
 	getSongsByArtist: getSongsByArtist,
@@ -23,6 +24,21 @@ module.exports = {
 };
 
 //GET EDITING GOING
+
+function getMostRecentSongs(req, res, next){
+	db.any(`select * from songs order by id desc limit 10`)
+		.then(data => {
+			res.status(200)
+				.json({
+					status: 'success',
+					data: data,
+					message: 'retrieval successful'
+				})
+		})
+		.catch(err => {
+			return next(err);
+		})
+}
 
 function getAllSongs (req, res, next) {
 	db.any(`select * from songs`)
@@ -124,11 +140,7 @@ function addSong (res, next, title, artist){
 	console.log(title + " adding " + artist)
 	db.none(`insert into songs(title, artist) values('`+title+`', '`+artist+`')`)
 		.then(data => {
-			//res.status(200)
-				//.json({
-			//		status: 'success',
-			//		message: 'post successful'
-			//	})
+			//do something with the response status
 			checkArtist(artist);
 		})
 		.catch(err => {

@@ -8,6 +8,7 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+router.get('/api/songs/r/', db.getMostRecentSongs);
 router.get('/api/songs', db.getAllSongs);
 router.get('/api/songs/:id', db.getOneSong);
 router.post('/api/songs', db.checkSong);

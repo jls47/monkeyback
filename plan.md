@@ -11,6 +11,7 @@ Front
 Back
 -work on artist deletion when you have a chance
 -Artist deletion should be as such: every hour, if there are artists with no songs, delete them
+-Work on a request that returns the ten most recent additions based on id
 
 
 VISION FOR BOTH
