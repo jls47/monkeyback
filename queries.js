@@ -22,6 +22,8 @@ module.exports = {
 	removeSong: removeSong
 };
 
+//GET EDITING GOING
+
 function getAllSongs (req, res, next) {
 	db.any(`select * from songs`)
 		.then(data => {
@@ -36,6 +38,8 @@ function getAllSongs (req, res, next) {
 			return next(err);
 		})
 }
+
+//KEEP THIS ONE FOR THE DAMN EDIT FUNCTION
 
 function getOneSong (req, res, next) {
 	let Sid = parseInt(req.params.id);
@@ -90,35 +94,41 @@ function getAllArtists (req, res, next) {
 //add responses to functions that need it
 
 function checkSong(req, res, next){
-	console.dir(req.body);
-	console.log(`select * from songs where title = '` + req.body.title+`' and artist = '`+req.body.artist+`'`)
-	db.any(`select * from songs where title = '` + req.body.title+`' and artist = '`+req.body.artist+`'`)
-		.then(data => {
-			if(data.length == 0){
-				console.log('wtf')
-				addSong(res, next, req.body.title, req.body.artist);
-			}else{
-				res.status(200)
-					.json({
-						status: 'nope',
-						message: 'duplicate'
-					})
-			}
-		})
-		.catch(err => {
-			return next(err);
-		})
+	let songs = JSON.parse(req.body.data);
+	console.log(songs);
+	let statuses = [];
+	for(item in songs){
+		let data = songs[item];
+		
+		db.any(`select * from songs where title = '` + data.title+`' and artist = '`+data.artist+`'`)
+			.then(returned => {
+				if(returned.length == 0){
+					console.log(data.title + " " + data.artist);
+					addSong(res, next, data.title, data.artist);
+					statuses.push({title: 'Added'})
+				}else{
+					statuses.push({title: 'Already exists'})
+				}
+			})
+			.catch(err => {
+				statuses.push({title: err});
+			})
+	}
+	res.status(200)
+		.json(statuses);
+	
 
 }
 
 function addSong (res, next, title, artist){
+	console.log(title + " adding " + artist)
 	db.none(`insert into songs(title, artist) values('`+title+`', '`+artist+`')`)
 		.then(data => {
-			res.status(200)
-				.json({
-					status: 'success',
-					message: 'post successful'
-				})
+			//res.status(200)
+				//.json({
+			//		status: 'success',
+			//		message: 'post successful'
+			//	})
 			checkArtist(artist);
 		})
 		.catch(err => {
@@ -177,8 +187,6 @@ function getArtistsBySearch (req, res, next) {
 
 }
 
-//add genre list?
-
 function getSongsBySearch (req, res, next) {
 	let search = req.params.search;
 	db.any(`select * from songs where title ilike '%` + search + `%'`)
@@ -194,8 +202,6 @@ function getSongsBySearch (req, res, next) {
 			return next(err);
 		})
 }
-
-//Do we even need genre stuff?
 
 
 //if editing in new artist then add artist
@@ -294,6 +300,6 @@ function checkBlankArtists(){
 			console.log(err);
 		})
 }
-checkBlankArtists();
+
 setInterval(function(){checkBlankArtists()}, 60 * 60 * 1000);
 //Every hour, checks for blank artists and erases them.
