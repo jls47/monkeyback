@@ -6,6 +6,9 @@ Front
 -Pallette selection
 -Component design
 
+-Use vuetify I guess fuck.
+-Nevermind.  Change the UI.  Do dropdown and regular bar.  That's it.  Bulma or bust.
+
 
 
 Back

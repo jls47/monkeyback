@@ -218,21 +218,28 @@ function getSongsBySearch (req, res, next) {
 
 //if editing in new artist then add artist
 //if editing removes an artist then remove artist
+//edit multiple songs
 
 function editSong (req, res, next) {
 	console.log(req.body);
 	console.log(req.params);
-	db.none(`update songs set title = '` + req.body.title + `', artist = '` + req.body.artist + `' where id = '` + req.params.id+`'`)
-		.then(data => {
-			res.status(200)
-				.json({
-					status: 'success',
-					message: 'update successful'
-				})
-		})
-		.catch(err => {
-			return next(err);
-		})
+	let songs = JSON.parse(req.body.data);
+	console.log(songs);
+	let statuses = [];
+	for(item in songs){
+		db.none(`update songs set title = '` + songs[item].title + `', artist = '` + songs[item].artist + `' where id = '` + songs[item].id+`'`)
+			.then(data => {
+				res.status(200)
+					.json({
+						status: 'success',
+						message: 'update successful'
+					})
+			})
+			.catch(err => {
+				return next(err);
+			})
+	}
+	
 }
 
 //Do find artist by song id then remove?  Shit idk
