@@ -18,6 +18,8 @@ router.put('/api/songs/', db.editSong);
 router.get('/api/artists', db.getAllArtists);
 router.get('/api/artists/s/:search', db.getArtistsBySearch);
 router.delete('/api/songs/', db.removeSong);
+router.post('/api/user', db.createUser);
+router.get('/api/user', db.login);
 
 
 module.exports = router;

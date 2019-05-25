@@ -1,4 +1,5 @@
 const promise = require('bluebird');
+const bcrypt = require('bcrypt');
 
 const options = {
 	promiseLib: promise
@@ -20,10 +21,58 @@ module.exports = {
 	getArtistsBySearch: getArtistsBySearch,
 	getSongsBySearch: getSongsBySearch,
 	editSong: editSong,
-	removeSong: removeSong
+	removeSong: removeSong,
+	login: login,
+	createUser: createUser
 };
 
 //GET EDITING GOING
+
+function login(req, res, next){
+	console.log(req.query);
+	db.any(`select * from users where name = '`+req.query.name+`'`)
+		.then(data => {
+			bcrypt.compare(req.query.password, data[0].password, function(err, resp){
+				if(resp){
+					res.status(200)
+						.json({
+							status: 'success',
+							message: 'passwords match'
+						})
+				} else {
+					res.status(200)
+						.json({
+							status: 'failure',
+							message: `passwords don't match`
+						})
+				}
+			})
+		})
+		.catch(function(err){
+			return next(err);
+		})
+}
+
+function createUser(req, res, next){
+	console.log(req.body);
+	bcrypt.genSalt(10, function(err, salt){
+		bcrypt.hash(req.body.password, salt, function(err, hashpass){
+			db.any(`insert into users(name, password) values('`+req.body.name+`', '`+hashpass+`')`)
+				.then(data => {
+					res.status(200)
+						.json({
+							status: 'success',
+							data: data,
+							message: 'create successful'
+						})
+				})
+				.catch(e => {
+					return next(e);
+				})
+
+		});
+	})
+}
 
 function getMostRecentSongs(req, res, next){
 	db.any(`select * from songs order by id desc limit 10`)
