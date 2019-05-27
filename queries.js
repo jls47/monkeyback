@@ -272,19 +272,24 @@ function getSongsBySearch (req, res, next) {
 
 function editSong (req, res, next) {
 	console.log(req.body);
-	console.log(req.params);
-	let songs = JSON.parse(req.body.data);
-	console.log(songs);
+	let songs = req.body;
 	let statuses = [];
 	for(item in songs){
+		let id = songs[item].id;
 		db.none(`update songs set title = '` + songs[item].title + `', artist = '` + songs[item].artist + `' where id = '` + songs[item].id+`'`)
-			.then(data => {
-				res.status(200)
+			.then( function() {
+				statuses.push({success: id})
+				if(statuses.length == songs.length){
+					res.status(200)
 					.json({
 						status: 'success',
+						data: statuses,
 						message: 'update successful'
 					})
-			})
+				}
+			}
+
+			)
 			.catch(err => {
 				return next(err);
 			})
