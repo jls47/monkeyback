@@ -373,6 +373,7 @@ function checkBlankArtists(){
 		.catch(err => {
 			console.log(err);
 		})
+		
 }
 
 setInterval(function(){checkBlankArtists()}, 60 * 60 * 1000);
