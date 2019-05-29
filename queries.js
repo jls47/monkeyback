@@ -6,8 +6,8 @@ const options = {
 };
 
 const pgp = require('pg-promise')(options);
-const connectionString = 'postgres://vuwumxkxalrbzq:b711534d337515a892fb006d00d28d9e4b7ea23b7beea0a0a29f82dfc0f85183@ec2-174-129-10-235.compute-1.amazonaws.com:5432/datgbuhvg1etav';
-//const connectionString = 'postgres://monkey:monkey@localhost:5432/songs'
+//const connectionString = 'postgres://vuwumxkxalrbzq:b711534d337515a892fb006d00d28d9e4b7ea23b7beea0a0a29f82dfc0f85183@ec2-174-129-10-235.compute-1.amazonaws.com:5432/datgbuhvg1etav';
+const connectionString = 'postgres://monkey:monkey@localhost:5432/songs'
 const db = pgp(connectionString);
 
 module.exports = {
@@ -29,7 +29,6 @@ module.exports = {
 //GET EDITING GOING
 
 function login(req, res, next){
-	console.log(req.query);
 	db.any(`select * from users where name = '`+req.query.name+`'`)
 		.then(data => {
 			bcrypt.compare(req.query.password, data[0].password, function(err, resp){
@@ -126,7 +125,6 @@ function getOneSong (req, res, next) {
 //refactor the other thing into there
 function getSongsByArtist (req, res, next) {
 	let artist = req.params.artist;
-	console.log(artist);
 	db.any(`select * from songs where artist = '` + artist + `'`)
 		.then(data => {
 			res.status(200)
@@ -160,8 +158,9 @@ function getAllArtists (req, res, next) {
 //add responses to functions that need it
 
 function checkSong(req, res, next){
+	console.log('aaa');
+	console.log(req.body.data);
 	let songs = JSON.parse(req.body.data);
-	console.log(songs);
 	let statuses = [];
 	for(item in songs){
 		let data = songs[item];
@@ -187,7 +186,7 @@ function checkSong(req, res, next){
 }
 
 function addSong (res, next, title, artist){
-	console.log(title + " adding " + artist)
+	console.log(title + " adding " + artist);
 	db.none(`insert into songs(title, artist) values('`+title+`', '`+artist+`')`)
 		.then(data => {
 			//do something with the response status
@@ -271,7 +270,6 @@ function getSongsBySearch (req, res, next) {
 //edit multiple songs
 
 function editSong (req, res, next) {
-	console.log(req.body);
 	let songs = req.body;
 	let statuses = [];
 	for(item in songs){
@@ -299,19 +297,19 @@ function editSong (req, res, next) {
 
 //Do find artist by song id then remove?  Shit idk
 function removeSong (req, res, next){
-	console.log(req.body);
+	console.log(req.params.ids);
 	var statuses = [];
 	var pass = 0;
-	var ids = req.body.id.split(',');
-	for(var id of req.body.id.split(',')){
+	var ids = req.params.ids.split(',');
+	for(var id of req.params.ids.split(',')){
 		console.log(id);
 		console.log(`delete from songs where id = ` + id);
 		db.result(`delete from songs where id = ` + id)
 			.then((result) => {
-				console.log({id: 'Song removed'});
+				statuses.push({removed: id});
 			})
 			.catch((err) => {
-				console.log({id: err});
+				statuses.push({error: id});
 			})
 		pass += 1;
 		if(pass >= ids.length){
@@ -373,7 +371,7 @@ function checkBlankArtists(){
 		.catch(err => {
 			console.log(err);
 		})
-		
+
 }
 
 setInterval(function(){checkBlankArtists()}, 60 * 60 * 1000);

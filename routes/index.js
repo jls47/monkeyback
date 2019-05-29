@@ -11,13 +11,13 @@ router.get('/', function(req, res, next) {
 router.get('/api/songs/r/', db.getMostRecentSongs);
 router.get('/api/songs', db.getAllSongs);
 router.get('/api/songs/:id', db.getOneSong);
-router.post('/api/songs', db.checkSong);
+router.post('/api/songs/', db.checkSong);
 router.get('/api/songs/s/:search', db.getSongsBySearch);
 router.get('/api/songs/a/:artist', db.getSongsByArtist);
 router.put('/api/songs/', db.editSong);
 router.get('/api/artists', db.getAllArtists);
 router.get('/api/artists/s/:search', db.getArtistsBySearch);
-router.delete('/api/songs/', db.removeSong);
+router.delete('/api/songs/:ids', db.removeSong);
 router.post('/api/user', db.createUser);
 router.get('/api/user', db.login);
 
