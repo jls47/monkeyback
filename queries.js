@@ -291,6 +291,7 @@ function editSong (req, res, next) {
 				return next(err);
 			})
 	}
+	delayRemove();
 	
 }
 
@@ -302,7 +303,6 @@ function removeSong (req, res, next){
 	var ids = req.params.ids.split(',');
 	for(var id of req.params.ids.split(',')){
 		console.log(id);
-
 		console.log(`delete from songs where id = ` + id);
 		db.result(`delete from songs where id = ` + id)
 			.then((result) => {
@@ -316,6 +316,7 @@ function removeSong (req, res, next){
 			res.status(200).json(statuses);
 		}
 	}
+	delayRemove();
 }
 
 //maybe if number of songs <= 1?  test!
@@ -374,5 +375,9 @@ function checkBlankArtists(){
 
 }
 
-setInterval(function(){checkBlankArtists()}, 30 * 60 * 1000);
+function delayRemove(){
+	setInterval(function(){
+		checkBlankArtists()}
+	, 60 * 1000);
+}
 //Every half hour, checks for blank artists and erases them.
