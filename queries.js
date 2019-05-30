@@ -10,6 +10,7 @@ const connectionString = 'postgres://vuwumxkxalrbzq:b711534d337515a892fb006d00d2
 //const connectionString = 'postgres://monkey:monkey@localhost:5432/songs'
 const db = pgp(connectionString);
 
+
 module.exports = {
 	getMostRecentSongs: getMostRecentSongs,
 	getAllSongs: getAllSongs,
@@ -218,6 +219,7 @@ function checkArtist (name) {
 }
 
 function addArtist (name) {
+	console.log('Adding ' + name);
 	db.none(`insert into artists(name) values ('`+name+`')`)
 		.then(data => {
 			res.status(200)
@@ -264,10 +266,7 @@ function getSongsBySearch (req, res, next) {
 		})
 }
 
-
 //if editing in new artist then add artist
-//if editing removes an artist then remove artist
-//edit multiple songs
 
 function editSong (req, res, next) {
 	let songs = req.body;
@@ -303,6 +302,7 @@ function removeSong (req, res, next){
 	var ids = req.params.ids.split(',');
 	for(var id of req.params.ids.split(',')){
 		console.log(id);
+
 		console.log(`delete from songs where id = ` + id);
 		db.result(`delete from songs where id = ` + id)
 			.then((result) => {
@@ -374,5 +374,5 @@ function checkBlankArtists(){
 
 }
 
-setInterval(function(){checkBlankArtists()}, 60 * 60 * 1000);
-//Every hour, checks for blank artists and erases them.
+setInterval(function(){checkBlankArtists()}, 30 * 60 * 1000);
+//Every half hour, checks for blank artists and erases them.
