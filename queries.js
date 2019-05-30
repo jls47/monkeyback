@@ -273,7 +273,7 @@ function editSong (req, res, next) {
 	let statuses = [];
 	for(item in songs){
 		let id = songs[item].id;
-		db.none(`update songs set title = '` + songs[item].title + `', artist = '` + songs[item].artist + `' where id = '` + songs[item].id+`'`)
+		db.none(`update songs set title = '` + songs[item].title + `', artist = '` + songs[item].artist + `', notes='` + songs[item].notes + `' where id = '` + songs[item].id+`'`)
 			.then( function() {
 				statuses.push({success: id})
 				if(statuses.length == songs.length){
