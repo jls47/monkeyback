@@ -163,22 +163,27 @@ function checkSong(req, res, next){
 	console.log(req.body.data);
 	let songs = JSON.parse(req.body.data);
 	let statuses = [];
+	let artists = [];
 	for(item in songs){
 		let data = songs[item];
-		
-		db.any(`select * from songs where title = '` + data.title+`' and artist = '`+data.artist+`'`)
-			.then(returned => {
-				if(returned.length == 0){
-					console.log(data.title + " " + data.artist);
-					addSong(res, next, data.title, data.artist);
-					statuses.push({title: 'Added'})
-				}else{
-					statuses.push({title: 'Already exists'})
-				}
-			})
-			.catch(err => {
-				statuses.push({title: err});
-			})
+		if(artists.indexOf(data.artist) == -1){
+			db.any(`select * from songs where title = '` + data.title+`' and artist = '`+data.artist+`'`)
+				.then(returned => {
+					if(returned.length == 0){
+						console.log(data.title + " " + data.artist);
+						addSong(res, next, data.title, data.artist);
+						statuses.push({title: 'Added'})
+					}else{
+						statuses.push({title: 'Already exists'})
+					}
+				})
+				.catch(err => {
+					statuses.push({title: err});
+				})
+		}else{
+			checkSingleSong(data, res, next);
+		}
+		artists.push(data.artist);
 	}
 	res.status(200)
 		.json(statuses);
@@ -186,6 +191,29 @@ function checkSong(req, res, next){
 
 }
 
+function checkSingleSong(data, res, next){
+	setTimeout(function(){
+		console.log('Deferred single song check');
+		db.any(`select * from songs where title = '` + data.title+`' and artist = '`+data.artist+`'`)
+		.then(returned => {
+			console.log(returned);
+			if(returned.length == 0){
+				console.log(data.title + " " + data.artist);
+				addSong(res, next, data.title, data.artist);
+				console.log('adding song');
+			}else{
+				console.log('song already exists')
+			}
+		})
+		.catch(err => {
+			return(err);
+		})
+	}, 300);
+	
+}
+
+//Adding more than one song by the same artist creates multiple instances of that artist.  This is a problem.
+//Will solve for now by pruning duplicate artists for the time being.
 function addSong (res, next, title, artist){
 	console.log(title + " adding " + artist);
 	db.none(`insert into songs(title, artist) values('`+title+`', '`+artist+`')`)
