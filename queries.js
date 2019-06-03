@@ -166,24 +166,29 @@ function checkSong(req, res, next){
 	let artists = [];
 	for(item in songs){
 		let data = songs[item];
-		if(artists.indexOf(data.artist) == -1){
-			db.any(`select * from songs where title = '` + data.title+`' and artist = '`+data.artist+`'`)
-				.then(returned => {
-					if(returned.length == 0){
-						console.log(data.title + " " + data.artist);
-						addSong(res, next, data.title, data.artist);
-						statuses.push({title: 'Added'})
-					}else{
-						statuses.push({title: 'Already exists'})
-					}
-				})
-				.catch(err => {
-					statuses.push({title: err});
-				})
-		}else{
-			checkSingleSong(data, res, next);
+		console.log(data.title.length);
+		console.log(data.artist.length);
+		if(data.title.length != 0 && data.artist.length != 0){
+			if(artists.indexOf(data.artist) == -1 && (data.title.length != 0 && data.artist.length != 0)){
+				db.any(`select * from songs where title = '` + data.title+`' and artist = '`+data.artist+`'`)
+					.then(returned => {
+						if(returned.length == 0){
+							console.log(data.title + " " + data.artist);
+							addSong(res, next, data.title, data.artist);
+							statuses.push({title: 'Added'})
+						}else{
+							statuses.push({title: 'Already exists'})
+						}
+					})
+					.catch(err => {
+						statuses.push({title: err});
+					})
+			}else{
+				checkSingleSong(data, res, next);
+			}
+			artists.push(data.artist);
 		}
-		artists.push(data.artist);
+		
 	}
 	res.status(200)
 		.json(statuses);
