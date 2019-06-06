@@ -184,7 +184,7 @@ function checkSong(req, res, next){
 						statuses.push({title: err});
 					})
 			}else{
-				checkSingleSong(data, res, next);
+				checkSongAlt(data, res, next);
 			}
 			artists.push(data.artist);
 		}
@@ -196,7 +196,7 @@ function checkSong(req, res, next){
 
 }
 
-function checkSingleSong(data, res, next){
+function checkSongAlt(data, res, next){
 	setTimeout(function(){
 		console.log('Deferred single song check');
 		db.any(`select * from songs where title = '` + data.title+`' and artist = '`+data.artist+`'`)
@@ -204,7 +204,7 @@ function checkSingleSong(data, res, next){
 			console.log(returned);
 			if(returned.length == 0){
 				console.log(data.title + " " + data.artist);
-				addSong(res, next, data.title, data.artist);
+				shortAddSong(res, next, data.title, data.artist);
 				console.log('adding song');
 			}else{
 				console.log('song already exists')
@@ -215,6 +215,17 @@ function checkSingleSong(data, res, next){
 		})
 	}, 300);
 	
+}
+
+function shortAddSong(res, next, title, artist){
+	db.none(`insert into songs(title, artist) values('`+title+`', '`+artist+`')`)
+		.then(data => {
+			console.log(data);
+			return data;
+		})
+		.catch( err => {
+			return next(err);
+		})
 }
 
 //Adding more than one song by the same artist creates multiple instances of that artist.  This is a problem.
