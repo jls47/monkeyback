@@ -75,7 +75,7 @@ function createUser(req, res, next){
 }
 
 function getMostRecentSongs(req, res, next){
-	db.any(`select * from songs order by id desc limit 10`)
+	db.any(`select * from songs order by id desc limit 3`)
 		.then(data => {
 			res.status(200)
 				.json({
@@ -160,7 +160,9 @@ function getAllArtists (req, res, next) {
 
 function checkSong(req, res, next){
 	console.log('aaa');
-	console.log(req.body.data);
+	console.log(req.body);
+	console.log(req.params);
+	console.log(req)
 	let songs = JSON.parse(req.body.data);
 	let statuses = [];
 	let artists = [];
