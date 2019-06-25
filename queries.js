@@ -128,9 +128,6 @@ function getSongsByArtist (req, res, next) {
 	let artist = req.params.artist;
 	db.any(`select * from songs where artist = '` + artist + `'`)
 		.then(data => {
-			for(let item of data){
-				getSongsByArtist2(item.artist);
-			}
 			res.status(200)
 				.json({
 					status: 'success',
@@ -147,7 +144,8 @@ function getAllArtists (req, res, next) {
 	db.any(`select * from artists`)
 		.then(data => {
 			for(let item of data){
-				getSongsByArtist2(item.artist);
+				console.log(item.name);
+				getSongsByArtist2(item.name);
 			}
 			res.status(200)
 				.json({
