@@ -161,8 +161,7 @@ function getAllArtists (req, res, next) {
 		})
 }
 
-function getSongsByArtist2 (req, res, next) {
-	var artist = req.params.artist;
+function getSongsByArtist2 (artist) {
 	db.any(`select * from songs where artist = '` + artist + `'`)
 		.then(data => {
 			setSongNums(artist, data.length);
