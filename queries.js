@@ -143,10 +143,6 @@ function getSongsByArtist (req, res, next) {
 function getAllArtists (req, res, next) {
 	db.any(`select * from artists`)
 		.then(data => {
-			for(let item of data){
-				console.log(item.name);
-				getSongsByArtist2(item.name);
-			}
 			res.status(200)
 				.json({
 					status: 'success',
@@ -159,7 +155,7 @@ function getAllArtists (req, res, next) {
 		})
 }
 
-function getSongsByArtist2 (artist) {
+function getSongsByArtist4Nums (artist) {
 	db.any(`select * from songs where artist = '` + artist + `'`)
 		.then(data => {
 			setSongNums(artist, data.length);
@@ -180,6 +176,8 @@ function setSongNums (artist, length){
 //add responses to functions that need it
 
 function checkSong(req, res, next){
+	console.log('aaa');
+	console.log(req.body.data);
 	let songs = JSON.parse(req.body.data);
 	let statuses = [];
 	let artists = [];
@@ -269,8 +267,10 @@ function checkArtist (name) {
 		.then(data => {
 			if(data.length == 0){
 				addArtist(name);
+				
 			}else{
 				present = true;
+				addSongNum(name);
 				console.dir(data);
 				console.log('present');
 			}
@@ -285,6 +285,7 @@ function addArtist (name) {
 	console.log('Adding ' + name);
 	db.none(`insert into artists(name) values ('`+name+`')`)
 		.then(data => {
+			addSongNum(name);
 			res.status(200)
 				.json({
 					status: 'success',
@@ -294,6 +295,10 @@ function addArtist (name) {
 		.catch(err => {
 			return err;
 		})
+}
+
+function addSongNum(artist){
+	db.none(`update artist set songnum = songnum + 1 where name = '`+artist+`'`)
 }
 
 function getArtistsBySearch (req, res, next) {
@@ -429,6 +434,7 @@ function checkBlankArtists(){
 		.then(data => {
 			console.log(data);
 			for(item in data){
+				getSongsByArtist4Nums(data[item].name);
 				checkArtistHasSongs(data[item].name);
 			}
 		})
@@ -443,11 +449,8 @@ function delayRemove(){
 		checkBlankArtists()}
 	, 60 * 1000);
 }
-//After a minute, checks for blank artists and erases.
+//Every half hour, checks for blank artists and erases them.
 
-
-
-let array = [{a: 1, numSongs: 2}, {a: 1, numSongs: 2},{a: 1, numSongs: 1},{a: 1, numSongs: 0}]
 
 function quickSort(arr) {
   let ppoint = Math.floor(Math.random() * arr.length);
