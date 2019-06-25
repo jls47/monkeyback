@@ -128,6 +128,9 @@ function getSongsByArtist (req, res, next) {
 	let artist = req.params.artist;
 	db.any(`select * from songs where artist = '` + artist + `'`)
 		.then(data => {
+			for(let item of data){
+				getSongsByArtist2(item.artist);
+			}
 			res.status(200)
 				.json({
 					status: 'success',
@@ -143,6 +146,9 @@ function getSongsByArtist (req, res, next) {
 function getAllArtists (req, res, next) {
 	db.any(`select * from artists`)
 		.then(data => {
+			for(let item of data){
+				getSongsByArtist2(item.artist);
+			}
 			res.status(200)
 				.json({
 					status: 'success',
@@ -155,14 +161,28 @@ function getAllArtists (req, res, next) {
 		})
 }
 
+function getSongsByArtist2 (req, res, next) {
+	var artist = req.params.artist;
+	db.any(`select * from songs where artist = '` + artist + `'`)
+		.then(data => {
+			setSongNums(artist, data.length);
+		})
+		.catch(err => {
+			return next(err);
+		})
+}
+
+function setSongNums (artist, length){
+	db.none(`update artists set numsongs = ` + length + ` where name = '`+artist+`'`)
+		.then(data => {
+			console.log(data);
+		})
+}
+
 //Add song, add artist if not present
 //add responses to functions that need it
 
 function checkSong(req, res, next){
-	console.log('aaa');
-	console.log(req.body);
-	console.log(req.params);
-	console.log(req)
 	let songs = JSON.parse(req.body.data);
 	let statuses = [];
 	let artists = [];
@@ -426,4 +446,37 @@ function delayRemove(){
 		checkBlankArtists()}
 	, 60 * 1000);
 }
-//Every half hour, checks for blank artists and erases them.
+//After a minute, checks for blank artists and erases.
+
+
+
+let array = [{a: 1, numSongs: 2}, {a: 1, numSongs: 2},{a: 1, numSongs: 1},{a: 1, numSongs: 0}]
+
+function quickSort(arr) {
+  let ppoint = Math.floor(Math.random() * arr.length);
+  let pnum = arr[ppoint].numSongs;
+  console.log(pnum);
+  let left = [];
+  let right = [];
+  let middle = [];
+  for(let i = 0; i < arr.length; i++){
+    if(arr[i].numSongs > pnum){
+      right.push(arr[i]);
+    }else if(arr[i].numSongs < pnum){
+      left.push(arr[i]);
+    }else{
+      middle.push(arr[i]);
+    }
+  }
+  
+  if(left.length > 1 && right.length > 1){
+    return quickSort(left).concat(middle.concat(quickSort(right)))
+  }else if(left.length <= 1 && right.length > 1){
+    return left.concat(middle.concat(quickSort(right)))
+  }else if(left.length > 1 && right.length <= 1){
+    return quickSort(left).concat(middle.concat(right))
+  }else{
+    return left.concat(middle.concat(right))
+  }
+}
+

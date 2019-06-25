@@ -7,7 +7,7 @@ insert into artists (name) values ('Cheap Trick'), ('A Tribe Called Quest'), ('G
 
 insert 
 
-create table artists(ID SERIAL PRIMARY KEY not null unique, name VARCHAR not null, SID int not null default 0);
+create table artists(ID SERIAL PRIMARY KEY not null unique, name VARCHAR not null, SID int not null default 0, numsongs int not null default 0);
 
 create user monkey with password 'monkey';
 
