@@ -142,22 +142,6 @@ function getSongsByArtist (req, res, next) {
 		})
 }
 
-function getSongsByLetter(req, res, next){
-	let letter = req.params.letter;
-	db.any(`select * from songs where lower(name) similar to '(`+letter+`)%'`)
-		.then(data => {
-			res.status(200)
-				.json({
-					status: 'success',
-					data: data,
-					message: 'found stuff by letter'
-				})
-		})
-		.catch(err => {
-			return next(err);
-		})
-}
-
 function getAllArtists (req, res, next) {
 	db.any(`select * from artists`)
 		.then(data => {
@@ -173,9 +157,24 @@ function getAllArtists (req, res, next) {
 		})
 }
 
+function getSongsByLetter(req, res, next){
+	let letter = req.params.letter;
+	db.any(`select * from songs where lower(title) similar to '(`+letter+`)%'`)
+		.then(data => {
+			res.status(200)
+				.json({
+					status: 'success',
+					data: data,
+					message: 'found stuff by letter'
+				})
+		})
+		.catch(err => {
+			return next(err);
+		})
+}
+
 function getArtistsByLetter(req, res, next){
 	let letter = req.params.letter;
-	console.log(`select * from artists where name similar to '(`+letter+`)%'`);
 	db.any(`select * from artists where lower(name) similar to '(`+letter+`)%'`)
 		.then(data => {
 			console.log(data);
