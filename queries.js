@@ -157,7 +157,38 @@ function getAllArtists (req, res, next) {
 		})
 }
 
-3
+function getSongsByLetter(req, res, next){
+	let letter = req.params.letter;
+	db.any(`select * from songs where lower(title) similar to '(`+letter+`)%'`)
+		.then(data => {
+			res.status(200)
+				.json({
+					status: 'success',
+					data: data,
+					message: 'found stuff by letter'
+				})
+		})
+		.catch(err => {
+			return next(err);
+		})
+}
+
+function getArtistsByLetter(req, res, next){
+	let letter = req.params.letter;
+	db.any(`select * from artists where lower(name) similar to '(`+letter+`)%'`)
+		.then(data => {
+			console.log(data);
+			res.status(200)
+				.json({
+					status: 'success',
+					data: data,
+					message: 'found stuff by letter'
+				})
+		})
+		.catch(err => {
+			return next(err);
+		})
+}
 
 function getSongsByArtist4Nums (artist) {
 	db.any(`select * from songs where artist = '` + artist + `'`)
