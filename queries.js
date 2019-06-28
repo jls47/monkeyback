@@ -6,8 +6,8 @@ const options = {
 };
 
 const pgp = require('pg-promise')(options);
-const connectionString = 'postgres://vuwumxkxalrbzq:b711534d337515a892fb006d00d28d9e4b7ea23b7beea0a0a29f82dfc0f85183@ec2-174-129-10-235.compute-1.amazonaws.com:5432/datgbuhvg1etav';
-//const connectionString = 'postgres://monkey:monkey@localhost:5432/songs'
+//const connectionString = 'postgres://vuwumxkxalrbzq:b711534d337515a892fb006d00d28d9e4b7ea23b7beea0a0a29f82dfc0f85183@ec2-174-129-10-235.compute-1.amazonaws.com:5432/datgbuhvg1etav';
+const connectionString = 'postgres://monkey:monkey@localhost:5432/songs'
 const db = pgp(connectionString);
 
 
@@ -144,7 +144,7 @@ function getSongsByArtist (req, res, next) {
 
 function getSongsByLetter(req, res, next){
 	let letter = req.params.letter;
-	db.any(`select * from songs where title similar to '`+letter+`'`)
+	db.any(`select * from songs where lower(name) similar to '(`+letter+`)%'`)
 		.then(data => {
 			res.status(200)
 				.json({
@@ -175,8 +175,10 @@ function getAllArtists (req, res, next) {
 
 function getArtistsByLetter(req, res, next){
 	let letter = req.params.letter;
-	db.any(`select * from artists where name similar to '`+letter+`'`)
+	console.log(`select * from artists where name similar to '(`+letter+`)%'`);
+	db.any(`select * from artists where lower(name) similar to '(`+letter+`)%'`)
 		.then(data => {
+			console.log(data);
 			res.status(200)
 				.json({
 					status: 'success',
