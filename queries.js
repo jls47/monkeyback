@@ -88,6 +88,7 @@ function createUser(req, res, next){
 }
 
 function getMostRecentSongs(req, res, next){
+	//concat data with data from other dbs
 	db.any(`select * from songs order by id desc limit 3`)
 		.then(data => {
 			res.status(200)
@@ -103,6 +104,7 @@ function getMostRecentSongs(req, res, next){
 }
 
 function getAllSongs (req, res, next) {
+	//concat data with data from other dbs
 	db.any(`select * from songs`)
 		.then(data => {
 			res.status(200)
@@ -138,6 +140,7 @@ function getOneSong (req, res, next) {
 
 //refactor the other thing into there
 function getSongsByArtist (req, res, next) {
+	//select db depending on artist
 	let artist = req.params.artist;
 	db.any(`select * from songs where artist = '` + artist + `'`)
 		.then(data => {
@@ -154,6 +157,7 @@ function getSongsByArtist (req, res, next) {
 }
 
 function getAllArtists (req, res, next) {
+	//concat data with data from other dbs
 	db.any(`select * from artists`)
 		.then(data => {
 			res.status(200)
@@ -169,6 +173,7 @@ function getAllArtists (req, res, next) {
 }
 
 function getSongsByLetter(req, res, next){
+	//concat data with data from other dbs
 	let letter = req.params.letter;
 	db.any(`select * from songs where lower(title) similar to '(`+letter+`)%'`)
 		.then(data => {
@@ -185,6 +190,7 @@ function getSongsByLetter(req, res, next){
 }
 
 function getArtistsByLetter(req, res, next){
+	//concat data with data from other dbs
 	let letter = req.params.letter;
 	db.any(`select * from artists where lower(name) similar to '(`+letter+`)%'`)
 		.then(data => {
@@ -202,6 +208,7 @@ function getArtistsByLetter(req, res, next){
 }
 
 function getSongsByArtist4Nums (artist) {
+	//select db based on artist
 	db.any(`select * from songs where artist = '` + artist + `'`)
 		.then(data => {
 			setSongNums(artist, data.length);
@@ -212,6 +219,7 @@ function getSongsByArtist4Nums (artist) {
 }
 
 function setSongNums (artist, length){
+	//select db based on artist
 	db.none(`update artists set numsongs = ` + length + ` where name = '`+artist+`'`)
 		.then(data => {
 			console.log(data);
@@ -222,6 +230,8 @@ function setSongNums (artist, length){
 //add responses to functions that need it
 
 function checkSong(req, res, next){
+
+	//concat data with data from other dbs
 	console.log('aaa');
 	console.log(req.body.data);
 	let songs = JSON.parse(req.body.data);
@@ -232,7 +242,31 @@ function checkSong(req, res, next){
 		console.log(data.artist.length);
 		if(data.title.length != 0 && data.artist.length != 0){
 			if(artists.indexOf(data.artist) == -1 && (data.title.length != 0 && data.artist.length != 0)){
-				startCheck(res, next, data, db);
+				let artistPost = item.artist.indexOf("'");
+		        let songPost = item.title.indexOf("'");
+		        if(artistPost != -1){
+		          item.artist = item.artist.slice(0, artistPost) + "'" + item.artist.slice(artistPost);
+		        }
+
+		        if(songPost != -1){
+		          item.title = item.title.slice(0, songPost) + "'" + item.title.slice(songPost);
+		        }
+
+		        if(item.artist.toLowerCase() < 'cliff richard'){
+		          startCheck(res, next, data, db);
+		        }else if(item.artist.toLowerCase() < 'hank williams'){
+		          startCheck(res, next, data, db1);
+		        }else if(item.artist.toLowerCase() < 'leonard cohen'){
+		          startCheck(res, next, data, db2);
+		        }else if(item.artist.toLowerCase() < 'peter gabriel'){
+		          startCheck(res, next, data, d3);
+		        }else if(item.artist.toLowerCase() < 'tara lyn hart'){
+		          startCheck(res, next, data, db4);
+		        }else{
+		          startCheck(res, next, data, db5);
+		        }
+
+
 			}else{
 				checkSongAlt(data, res, next);
 			}
@@ -253,12 +287,13 @@ function startCheck(res, next, data, dbase){
 						console.log(returned);
 						if(returned.length == 0){
 							console.log(data.title + " " + data.artist);
+							//pass dbase along
 							addSong(res, next, data.title, data.artist);
 						}else{
 							//statuses.push({title: 'Already exists'})
 						}
 					})
-					.catch(err => {
+	 				.catch(err => {
 						statuses.push({title: err});
 					})
 }
