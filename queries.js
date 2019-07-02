@@ -13,6 +13,7 @@ const cs3 = 'postgres://vvunoatpwmtfhc:3bad7c7626309d6461387916f9b7da7738b990a01
 const cs4 = 'postgres://ejxjjxdudqqvku:b1ada0ccb42c75fe0f53ab63dc41755c4f8d4f833d44e78ceb0f8750563c10e1@ec2-174-129-29-101.compute-1.amazonaws.com:5432/d1lpqv3idv4g2d';
 const cs5 = 'postgres://pvpklqppikggwh:336395952ce7d3ee3d5b53b40f9760001cad43ff1f193190b030a47e73fa1284@ec2-174-129-29-101.compute-1.amazonaws.com:5432/de4cvce8djbd4p';
 //const connectionString = 'postgres://monkey:monkey@localhost:5432/songs'
+//const db = pgp(connectionString);
 const db = pgp(cs0);
 const db1 = pgp(cs1);
 const db2 = pgp(cs2);
@@ -231,7 +232,7 @@ function checkSong(req, res, next){
 		console.log(data.artist.length);
 		if(data.title.length != 0 && data.artist.length != 0){
 			if(artists.indexOf(data.artist) == -1 && (data.title.length != 0 && data.artist.length != 0)){
-				startCheck(data, db);
+				startCheck(res, next, data, db);
 			}else{
 				checkSongAlt(data, res, next);
 			}
@@ -243,10 +244,13 @@ function checkSong(req, res, next){
 		.json({success: 'yes'});
 }
 
-function startCheck(data, dbase){
+function startCheck(res, next, data, dbase){
 	var statuses = [];
+
 	dbase.any(`select * from songs where title = '` + data.title+`' and artist = '`+data.artist+`'`)
 					.then(returned => {
+						console.log(data);
+						console.log(returned);
 						if(returned.length == 0){
 							console.log(data.title + " " + data.artist);
 							addSong(res, next, data.title, data.artist);
@@ -346,7 +350,7 @@ function addArtist (name) {
 }
 
 function addSongNum(artist){
-	db.none(`update artist set songnum = songnum + 1 where name = '`+artist+`'`)
+	db.none(`update artists set songnum = songnum + 1 where name = '`+artist+`'`)
 }
 
 function getArtistsBySearch (req, res, next) {
