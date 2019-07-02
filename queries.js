@@ -244,6 +244,7 @@ function checkSong(req, res, next){
 }
 
 function startCheck(data, dbase){
+	let statuses = [];
 	dbase.any(`select * from songs where title = '` + data.title+`' and artist = '`+data.artist+`'`)
 					.then(returned => {
 						if(returned.length == 0){
