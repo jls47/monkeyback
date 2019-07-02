@@ -6,9 +6,19 @@ const options = {
 };
 
 const pgp = require('pg-promise')(options);
-const connectionString = 'postgres://vuwumxkxalrbzq:b711534d337515a892fb006d00d28d9e4b7ea23b7beea0a0a29f82dfc0f85183@ec2-174-129-10-235.compute-1.amazonaws.com:5432/datgbuhvg1etav';
+const cs0 = 'postgres://vuwumxkxalrbzq:b711534d337515a892fb006d00d28d9e4b7ea23b7beea0a0a29f82dfc0f85183@ec2-174-129-10-235.compute-1.amazonaws.com:5432/datgbuhvg1etav';
+const cs1 = 'postgres://ruualbbvnlcyjo:fef64ebccd1dd6821e8773af09c8e9e1a92dad51584bb6dbaae14fbbd4b5b270@ec2-174-129-29-101.compute-1.amazonaws.com:5432/d1pqf90fuq8c46';
+const cs2 = 'postgres://lmbomgkhybtugl:d7c8f8afb46c9e83c1ef5d2a97ee9554f41284f986c718f87c526872326d17c7@ec2-50-19-221-38.compute-1.amazonaws.com:5432/d8p5bpm6j9bj0q';
+const cs3 = 'postgres://vvunoatpwmtfhc:3bad7c7626309d6461387916f9b7da7738b990a01c1037316e738e7b60f42721@ec2-174-129-29-101.compute-1.amazonaws.com:5432/demku8g0oqrsrh';
+const cs4 = 'postgres://ejxjjxdudqqvku:b1ada0ccb42c75fe0f53ab63dc41755c4f8d4f833d44e78ceb0f8750563c10e1@ec2-174-129-29-101.compute-1.amazonaws.com:5432/d1lpqv3idv4g2d';
+const cs5 = 'postgres://pvpklqppikggwh:336395952ce7d3ee3d5b53b40f9760001cad43ff1f193190b030a47e73fa1284@ec2-174-129-29-101.compute-1.amazonaws.com:5432/de4cvce8djbd4p';
 //const connectionString = 'postgres://monkey:monkey@localhost:5432/songs'
-const db = pgp(connectionString);
+const db = pgp(cs0);
+const db1 = pgp(cs1);
+const db2 = pgp(cs2);
+const db3 = pgp(cs3);
+const db4 = pgp(cs4);
+const db5 = pgp(cs5);
 
 
 module.exports = {
@@ -214,7 +224,6 @@ function checkSong(req, res, next){
 	console.log('aaa');
 	console.log(req.body.data);
 	let songs = JSON.parse(req.body.data);
-	let statuses = [];
 	let artists = [];
 	for(item in songs){
 		let data = songs[item];
@@ -222,7 +231,20 @@ function checkSong(req, res, next){
 		console.log(data.artist.length);
 		if(data.title.length != 0 && data.artist.length != 0){
 			if(artists.indexOf(data.artist) == -1 && (data.title.length != 0 && data.artist.length != 0)){
-				db.any(`select * from songs where title = '` + data.title+`' and artist = '`+data.artist+`'`)
+				startCheck(data, db);
+			}else{
+				checkSongAlt(data, res, next);
+			}
+			artists.push(data.artist);
+		}
+		
+	}
+	res.status(200)
+		.json(statuses);
+}
+
+function startCheck(data, dbase){
+	dbase.any(`select * from songs where title = '` + data.title+`' and artist = '`+data.artist+`'`)
 					.then(returned => {
 						if(returned.length == 0){
 							console.log(data.title + " " + data.artist);
@@ -235,18 +257,9 @@ function checkSong(req, res, next){
 					.catch(err => {
 						statuses.push({title: err});
 					})
-			}else{
-				checkSongAlt(data, res, next);
-			}
-			artists.push(data.artist);
-		}
-		
-	}
-	res.status(200)
-		.json(statuses);
-	
-
 }
+
+
 
 function checkSongAlt(data, res, next){
 	setTimeout(function(){

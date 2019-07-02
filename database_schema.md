@@ -28,3 +28,9 @@ Leonard Cohen-<Peter Gabriel: 4
 Peter Gabriel-<Tara Lyn Hart: 5
 
 Tara Lyn Hart-Beyond: 6
+
+Navy: 2
+Rose: 3
+Aqua: 4
+Gray: 5
+Maroon: 6
