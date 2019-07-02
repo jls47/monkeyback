@@ -12,7 +12,7 @@ const cs2 = 'postgres://lmbomgkhybtugl:d7c8f8afb46c9e83c1ef5d2a97ee9554f41284f98
 const cs3 = 'postgres://vvunoatpwmtfhc:3bad7c7626309d6461387916f9b7da7738b990a01c1037316e738e7b60f42721@ec2-174-129-29-101.compute-1.amazonaws.com:5432/demku8g0oqrsrh';
 const cs4 = 'postgres://ejxjjxdudqqvku:b1ada0ccb42c75fe0f53ab63dc41755c4f8d4f833d44e78ceb0f8750563c10e1@ec2-174-129-29-101.compute-1.amazonaws.com:5432/d1lpqv3idv4g2d';
 const cs5 = 'postgres://pvpklqppikggwh:336395952ce7d3ee3d5b53b40f9760001cad43ff1f193190b030a47e73fa1284@ec2-174-129-29-101.compute-1.amazonaws.com:5432/de4cvce8djbd4p';
-//const connectionString = 'postgres://monkey:monkey@localhost:5432/songs'
+const connectionString = 'postgres://monkey:monkey@localhost:5432/songs'
 //const db = pgp(connectionString);
 const db = pgp(cs0);
 const db1 = pgp(cs1);
@@ -236,12 +236,11 @@ function checkSong(req, res, next){
 	console.log(req.body.data);
 	let songs = JSON.parse(req.body.data);
 	let artists = [];
-	for(item in songs){
-		let data = songs[item];
-		console.log(data.title.length);
-		console.log(data.artist.length);
-		if(data.title.length != 0 && data.artist.length != 0){
-			if(artists.indexOf(data.artist) == -1 && (data.title.length != 0 && data.artist.length != 0)){
+	for(let item of songs){
+		console.log(item.title.length);
+		console.log(item.artist.length);
+		if(item.title.length != 0 && item.artist.length != 0){
+			if(artists.indexOf(item.artist) == -1){
 				let artistPost = item.artist.indexOf("'");
 		        let songPost = item.title.indexOf("'");
 		        if(artistPost != -1){
@@ -253,24 +252,23 @@ function checkSong(req, res, next){
 		        }
 
 		        if(item.artist.toLowerCase() < 'cliff richard'){
-		          startCheck(res, next, data, db);
+		          startCheck(res, next, item, db);
 		        }else if(item.artist.toLowerCase() < 'hank williams'){
-		          startCheck(res, next, data, db1);
+		          startCheck(res, next, item, db1);
 		        }else if(item.artist.toLowerCase() < 'leonard cohen'){
-		          startCheck(res, next, data, db2);
+		          startCheck(res, next, item, db2);
 		        }else if(item.artist.toLowerCase() < 'peter gabriel'){
-		          startCheck(res, next, data, d3);
+		          startCheck(res, next, item, d3);
 		        }else if(item.artist.toLowerCase() < 'tara lyn hart'){
-		          startCheck(res, next, data, db4);
+		          startCheck(res, next, item, db4);
 		        }else{
-		          startCheck(res, next, data, db5);
+		          startCheck(res, next, item, db5);
 		        }
 
-
 			}else{
-				checkSongAlt(data, res, next);
+				checkSongAlt(item, res, next);
 			}
-			artists.push(data.artist);
+			artists.push(item.artist);
 		}
 		
 	}
