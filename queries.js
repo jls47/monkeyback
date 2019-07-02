@@ -250,7 +250,7 @@ function checkSong(req, res, next){
 		        if(songPost != -1){
 		          item.title = item.title.slice(0, songPost) + "'" + item.title.slice(songPost);
 		        }
-
+		        console.log(item.artist.toLowerCase());
 		        if(item.artist.toLowerCase() < 'cliff richard'){
 		          startCheck(res, next, item, db);
 		        }else if(item.artist.toLowerCase() < 'hank williams'){
@@ -258,15 +258,29 @@ function checkSong(req, res, next){
 		        }else if(item.artist.toLowerCase() < 'leonard cohen'){
 		          startCheck(res, next, item, db2);
 		        }else if(item.artist.toLowerCase() < 'peter gabriel'){
-		          startCheck(res, next, item, d3);
+		          startCheck(res, next, item, db3);
 		        }else if(item.artist.toLowerCase() < 'tara lyn hart'){
 		          startCheck(res, next, item, db4);
 		        }else{
+		          console.log(6);
 		          startCheck(res, next, item, db5);
 		        }
 
 			}else{
-				checkSongAlt(item, res, next);
+				if(item.artist.toLowerCase() < 'cliff richard'){
+		          checkSongAlt(res, next, item, db);
+		        }else if(item.artist.toLowerCase() < 'hank williams'){
+		          checkSongAlt(res, next, item, db1);
+		        }else if(item.artist.toLowerCase() < 'leonard cohen'){
+		          checkSongAlt(res, next, item, db2);
+		        }else if(item.artist.toLowerCase() < 'peter gabriel'){
+		          checkSongAlt(res, next, item, db3);
+		        }else if(item.artist.toLowerCase() < 'tara lyn hart'){
+		          checkSongAlt(res, next, item, db4);
+		        }else{
+		          console.log(6);
+		          checkSongAlt(res, next, item, db5);
+		        }
 			}
 			artists.push(item.artist);
 		}
@@ -277,6 +291,7 @@ function checkSong(req, res, next){
 }
 
 function startCheck(res, next, data, dbase){
+	console.log(dbase);
 	var statuses = [];
 
 	dbase.any(`select * from songs where title = '` + data.title+`' and artist = '`+data.artist+`'`)
@@ -286,7 +301,7 @@ function startCheck(res, next, data, dbase){
 						if(returned.length == 0){
 							console.log(data.title + " " + data.artist);
 							//pass dbase along
-							addSong(res, next, data.title, data.artist);
+							addSong(res, next, data.title, data.artist, dbase);
 						}else{
 							//statuses.push({title: 'Already exists'})
 						}
@@ -298,15 +313,15 @@ function startCheck(res, next, data, dbase){
 
 
 
-function checkSongAlt(data, res, next){
+function checkSongAlt(data, res, next, dbase){
 	setTimeout(function(){
 		console.log('Deferred single song check');
-		db.any(`select * from songs where title = '` + data.title+`' and artist = '`+data.artist+`'`)
+		dbase.any(`select * from songs where title = '` + data.title+`' and artist = '`+data.artist+`'`)
 		.then(returned => {
 			console.log(returned);
 			if(returned.length == 0){
 				console.log(data.title + " " + data.artist);
-				shortAddSong(res, next, data.title, data.artist);
+				shortAddSong(res, next, data.title, data.artist, dbase);
 				console.log('adding song');
 			}else{
 				console.log('song already exists')
@@ -319,8 +334,8 @@ function checkSongAlt(data, res, next){
 	
 }
 
-function shortAddSong(res, next, title, artist){
-	db.none(`insert into songs(title, artist) values('`+title+`', '`+artist+`')`)
+function shortAddSong(res, next, title, artist, dbase){
+	dbase.none(`insert into songs(title, artist) values('`+title+`', '`+artist+`')`)
 		.then(data => {
 			console.log(data);
 			return data;
@@ -332,12 +347,12 @@ function shortAddSong(res, next, title, artist){
 
 //Adding more than one song by the same artist creates multiple instances of that artist.  This is a problem.
 //Will solve for now by pruning duplicate artists for the time being.
-function addSong (res, next, title, artist){
+function addSong (res, next,  title, artist, dbase){
 	console.log(title + " adding " + artist);
-	db.none(`insert into songs(title, artist) values('`+title+`', '`+artist+`')`)
+	dbase.none(`insert into songs(title, artist) values('`+title+`', '`+artist+`')`)
 		.then(data => {
 			//do something with the response status
-			checkArtist(artist);
+			checkArtist(artist, dbase);
 		})
 		.catch(err => {
 			return next(err);
@@ -346,16 +361,16 @@ function addSong (res, next, title, artist){
 
 
 //Double check that data function.  Allows adding duplicates right now.
-function checkArtist (name) {
+function checkArtist (name, dbase) {
 	console.log(name);
-	db.any(`select * from artists where name = '` + name + `'`)
+	dbase.any(`select * from artists where name = '` + name + `'`)
 		.then(data => {
 			if(data.length == 0){
-				addArtist(name);
+				addArtist(name, dbase);
 				
 			}else{
 				present = true;
-				addSongNum(name);
+				addSongNum(name, dbase);
 				console.dir(data);
 				console.log('present');
 			}
@@ -366,9 +381,9 @@ function checkArtist (name) {
 		})
 }
 
-function addArtist (name) {
+function addArtist (name, dbase) {
 	console.log('Adding ' + name);
-	db.none(`insert into artists(name) values ('`+name+`')`)
+	dbase.none(`insert into artists(name) values ('`+name+`')`)
 		.then(data => {
 			addSongNum(name);
 			res.status(200)
@@ -382,13 +397,29 @@ function addArtist (name) {
 		})
 }
 
-function addSongNum(artist){
-	db.none(`update artists set songnum = songnum + 1 where name = '`+artist+`'`)
+function addSongNum(artist, dbase){
+	dbase.none(`update artists set songnum = songnum + 1 where name = '`+artist+`'`)
 }
 
 function getArtistsBySearch (req, res, next) {
 	let search = req.params.search;
-	db.any(`select * from artists where name ilike '%` + search + `%'`)
+	let dbase;
+	if(item.artist.toLowerCase() < 'cliff richard'){
+	  dbase = db;
+	}else if(item.artist.toLowerCase() < 'hank williams'){
+	  dbase = db1;
+	}else if(item.artist.toLowerCase() < 'leonard cohen'){
+	  dbase = db2;
+	}else if(item.artist.toLowerCase() < 'peter gabriel'){
+	  dbase = db3;
+	}else if(item.artist.toLowerCase() < 'tara lyn hart'){
+	  dbase = db4;
+	}else{
+	  console.log(6);
+	  dbase = db5;
+	}
+
+	dbase.any(`select * from artists where name ilike '%` + search + `%'`)
 		.then(data => {
 			res.status(200)
 				.json({
@@ -402,6 +433,7 @@ function getArtistsBySearch (req, res, next) {
 		})
 
 }
+
 
 function getSongsBySearch (req, res, next) {
 	let search = req.params.search;
