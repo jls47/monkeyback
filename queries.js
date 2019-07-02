@@ -240,7 +240,7 @@ function checkSong(req, res, next){
 		
 	}
 	res.status(200)
-		.json(statuses);
+		.json(success: 'yes');
 }
 
 function startCheck(data, dbase){
