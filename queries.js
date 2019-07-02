@@ -244,15 +244,14 @@ function checkSong(req, res, next){
 }
 
 function startCheck(data, dbase){
-	let statuses = [];
+	var statuses = [];
 	dbase.any(`select * from songs where title = '` + data.title+`' and artist = '`+data.artist+`'`)
 					.then(returned => {
 						if(returned.length == 0){
 							console.log(data.title + " " + data.artist);
 							addSong(res, next, data.title, data.artist);
-							statuses.push({title: 'Added'})
 						}else{
-							statuses.push({title: 'Already exists'})
+							//statuses.push({title: 'Already exists'})
 						}
 					})
 					.catch(err => {
