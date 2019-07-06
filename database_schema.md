@@ -17,17 +17,17 @@ Keep working on getting this up to speed on the backend
 
 2065464559
 
-0-<Cliff Richard: 1
+0-<Chuck Berry: 1
 
-Cliff Richard-<Hank Williams: 2
+Chuck Berry-<H: 2
 
-Hank Williams-<Leonard Cohen: 3
+H-<Leann Rimes: 3
 
-Leonard Cohen-<Peter Gabriel: 4
+Leann Rimes-<Patty Smyth: 4
 
-Peter Gabriel-<Tara Lyn Hart: 5
+Patty Smyth-<T: 5
 
-Tara Lyn Hart-Beyond: 6
+T-Beyond: 6
 
 Navy: 2
 Rose: 3

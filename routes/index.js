@@ -11,8 +11,10 @@ router.get('/', function(req, res, next) {
 
 router.get('/api/songs/r/', db.getMostRecentSongs);
 router.get('/api/songs', db.getAllSongs);
+router.get('/api/songs1', db.getAllSongs1);
 router.get('/api/songs/:id', db.getOneSong);
 router.post('/api/songs/', db.checkSong);
+router.post('/api/song2/', db.checkSong1);
 router.get('/api/songs/s/:search', db.getSongsBySearch);
 router.get('/api/songs/a/:artist', db.getSongsByArtist);
 router.put('/api/songs/', db.editSong);

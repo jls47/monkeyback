@@ -25,11 +25,13 @@ const db5 = pgp(cs5);
 module.exports = {
 	getMostRecentSongs: getMostRecentSongs,
 	getAllSongs: getAllSongs,
+	getAllSongs1: getAllSongs1,
 	getOneSong: getOneSong,
 	getSongsByArtist: getSongsByArtist,
 	getAllArtists: getAllArtists,
 	addSong: addSong,
 	checkSong: checkSong,
+	checkSong1: checkSong1,
 	getArtistsBySearch: getArtistsBySearch,
 	getSongsBySearch: getSongsBySearch,
 	editSong: editSong,
@@ -87,9 +89,8 @@ function createUser(req, res, next){
 	})
 }
 
-function getMostRecentSongs(req, res, next){
-	//concat data with data from other dbs
-	db.any(`select * from songs order by id desc limit 3`)
+function getMostRecentSongs1(req, res, next){
+	Promise.all([recents(db), recents(db1), recents(db2), recents(db3), recents(db4), recents(db5)])
 		.then(data => {
 			res.status(200)
 				.json({
@@ -99,12 +100,28 @@ function getMostRecentSongs(req, res, next){
 				})
 		})
 		.catch(err => {
-			return next(err);
+			return err;
 		})
 }
 
-function getAllSongs (req, res, next) {
+function getMostRecentSongs(req, res, next){
 	//concat data with data from other dbs
+	dbase.any(`select * from songs order by id desc limit 3`)
+		.then(data => {
+			//return data;
+			res.status(200)
+				.json({
+					status: 'success',
+					data: data,
+					message: 'retrieval successful'
+				})
+		})
+		.catch(err => {
+			return err;
+		})
+}
+
+function getAllSongs(req, res, next){
 	db.any(`select * from songs`)
 		.then(data => {
 			res.status(200)
@@ -119,11 +136,8 @@ function getAllSongs (req, res, next) {
 		})
 }
 
-//KEEP THIS ONE FOR THE DAMN EDIT FUNCTION
-
-function getOneSong (req, res, next) {
-	let Sid = parseInt(req.params.id);
-	db.any(`select * from songs where id = ` + Sid)
+function getAllSongs1(req, res, next){
+	Promise.all([getAll(db), getAll(db1), getAll(db2), getAll(db3), getAll(db4), getAll(db5)])
 		.then(data => {
 			res.status(200)
 				.json({
@@ -135,14 +149,41 @@ function getOneSong (req, res, next) {
 		.catch(err => {
 			return next(err);
 		})
+
 }
 
+function getAll (dbase) {
+	//concat data with data from other dbs
+	dbase.any(`select * from songs`)
+		.then(data => {
+			return data;
+		})
+		.catch(err => {
+			return err;
+		})
+}
 
 //refactor the other thing into there
 function getSongsByArtist (req, res, next) {
 	//select db depending on artist
 	let artist = req.params.artist;
-	db.any(`select * from songs where artist = '` + artist + `'`)
+	let dbase;
+	let lowArtist = artist.toLowerCase();
+	if(lowArtist < "t"){
+		dbase = db4;
+	}else if(lowArtist < "patty smyth"){
+		dbase = db3;
+	}else if(lowArtist < "leann rimes"){
+		dbase = db2;
+	}else if(lowArtist < "h"){
+		dbase = db1;
+	}else if(lowArtist < "chuck berry"){
+		dbase = db;
+	}else{
+		dbase = db5;
+	}
+
+	dbase.any(`select * from songs where artist = '` + artist + `'`)
 		.then(data => {
 			res.status(200)
 				.json({
@@ -175,7 +216,23 @@ function getAllArtists (req, res, next) {
 function getSongsByLetter(req, res, next){
 	//concat data with data from other dbs
 	let letter = req.params.letter;
-	db.any(`select * from songs where lower(title) similar to '(`+letter+`)%'`)
+	let dbase;
+	let lowLet = letter.toLowerCase();
+	if(lowLet < "chuck berry"){
+		dbase = db;
+	}else if(lowLet < "h"){
+		dbase = db1;
+	}else if(lowLet < "leann rimes"){
+		dbase = db2;
+	}else if(lowLet < "patty smyth"){
+		dbase = db3;
+	}else if(lowLet < "t"){
+		dbase = db4;
+	}else{
+		dbase = db5;
+	}
+
+	dbase.any(`select * from songs where lower(title) similar to '(`+letter+`)%'`)
 		.then(data => {
 			res.status(200)
 				.json({
@@ -192,7 +249,22 @@ function getSongsByLetter(req, res, next){
 function getArtistsByLetter(req, res, next){
 	//concat data with data from other dbs
 	let letter = req.params.letter;
-	db.any(`select * from artists where lower(name) similar to '(`+letter+`)%'`)
+	let dbase;
+	let lowLet = letter.toLowerCase();
+	if(lowLet < "chuck berry"){
+		dbase = db;
+	}else if(lowLet < "h"){
+		dbase = db1;
+	}else if(lowLet < "leann rimes"){
+		dbase = db2;
+	}else if(lowLet < "patty smyth"){
+		dbase = db3;
+	}else if(lowLet < "t"){
+		dbase = db4;
+	}else{
+		dbase = db5;
+	}
+	dbase.any(`select * from artists where lower(name) similar to '(`+letter+`)%'`)
 		.then(data => {
 			console.log(data);
 			res.status(200)
@@ -207,20 +279,20 @@ function getArtistsByLetter(req, res, next){
 		})
 }
 
-function getSongsByArtist4Nums (artist) {
+function getSongsByArtist4Nums (artist, dbase) {
 	//select db based on artist
-	db.any(`select * from songs where artist = '` + artist + `'`)
+	dbase.any(`select * from songs where artist = '` + artist + `'`)
 		.then(data => {
-			setSongNums(artist, data.length);
+			setSongNums(artist, data.length, dbase);
 		})
 		.catch(err => {
 			return next(err);
 		})
 }
 
-function setSongNums (artist, length){
+function setSongNums (artist, length, dbase){
 	//select db based on artist
-	db.none(`update artists set numsongs = ` + length + ` where name = '`+artist+`'`)
+	dbase.none(`update artists set numsongs = ` + length + ` where name = '`+artist+`'`)
 		.then(data => {
 			console.log(data);
 		})
@@ -232,13 +304,56 @@ function setSongNums (artist, length){
 function checkSong(req, res, next){
 
 	//concat data with data from other dbs
-	console.log('aaa');
-	console.log(req.body.data);
 	let songs = JSON.parse(req.body.data);
 	let artists = [];
 	for(let item of songs){
-		console.log(item.title.length);
-		console.log(item.artist.length);
+		if(item.title.length != 0 && item.artist.length != 0){
+			if(artists.indexOf(item.artist) == -1){
+
+				let artistPost = item.artist.indexOf("'");
+		        let songPost = item.title.indexOf("'");
+
+		        if(artistPost != -1){
+		          item.artist = item.artist.slice(0, artistPost) + "'" + item.artist.slice(artistPost);
+		        }
+
+		        if(songPost != -1){
+		          item.title = item.title.slice(0, songPost) + "'" + item.title.slice(songPost);
+		        }
+
+		        startCheck(res, next, item, db);
+		        
+
+			}else{
+
+				let artistPost = item.artist.indexOf("'");
+			    let songPost = item.title.indexOf("'");
+
+			    if(artistPost != -1){
+			      item.artist = item.artist.slice(0, artistPost) + "'" + item.artist.slice(artistPost);
+			    }
+
+			    if(songPost != -1){
+			      item.title = item.title.slice(0, songPost) + "'" + item.title.slice(songPost);
+			    }
+
+			    checkSongAlt(res, next, item, db);
+		        
+			}
+			artists.push(item.artist);
+		}
+		
+	}
+	res.status(200)
+		.json({success: 'yes'});
+}
+
+function checkSong1(req, res, next){
+
+	//concat data with data from other dbs
+	let songs = JSON.parse(req.body.data);
+	let artists = [];
+	for(let item of songs){
 		if(item.title.length != 0 && item.artist.length != 0){
 			if(artists.indexOf(item.artist) == -1){
 				let artistPost = item.artist.indexOf("'");
@@ -251,34 +366,32 @@ function checkSong(req, res, next){
 		          item.title = item.title.slice(0, songPost) + "'" + item.title.slice(songPost);
 		        }
 		        console.log(item.artist.toLowerCase());
-		        if(item.artist.toLowerCase() < 'cliff richard'){
+		        if(item.artist.toLowerCase() < 'chuck berry'){
 		          startCheck(res, next, item, db);
-		        }else if(item.artist.toLowerCase() < 'hank williams'){
+		        }else if(item.artist.toLowerCase() < 'h'){
 		          startCheck(res, next, item, db1);
-		        }else if(item.artist.toLowerCase() < 'leonard cohen'){
+		        }else if(item.artist.toLowerCase() < 'leann rimes'){
 		          startCheck(res, next, item, db2);
-		        }else if(item.artist.toLowerCase() < 'peter gabriel'){
+		        }else if(item.artist.toLowerCase() < 'patty smyth'){
 		          startCheck(res, next, item, db3);
-		        }else if(item.artist.toLowerCase() < 'tara lyn hart'){
+		        }else if(item.artist.toLowerCase() < 't'){
 		          startCheck(res, next, item, db4);
 		        }else{
-		          console.log(6);
 		          startCheck(res, next, item, db5);
 		        }
 
 			}else{
-				if(item.artist.toLowerCase() < 'cliff richard'){
+				if(item.artist.toLowerCase() < 'chuck berry'){
 		          checkSongAlt(res, next, item, db);
-		        }else if(item.artist.toLowerCase() < 'hank williams'){
+		        }else if(item.artist.toLowerCase() < 'h'){
 		          checkSongAlt(res, next, item, db1);
-		        }else if(item.artist.toLowerCase() < 'leonard cohen'){
+		        }else if(item.artist.toLowerCase() < 'leann rimes'){
 		          checkSongAlt(res, next, item, db2);
-		        }else if(item.artist.toLowerCase() < 'peter gabriel'){
+		        }else if(item.artist.toLowerCase() < 'patty smyth'){
 		          checkSongAlt(res, next, item, db3);
-		        }else if(item.artist.toLowerCase() < 'tara lyn hart'){
+		        }else if(item.artist.toLowerCase() < 't'){
 		          checkSongAlt(res, next, item, db4);
 		        }else{
-		          console.log(6);
 		          checkSongAlt(res, next, item, db5);
 		        }
 			}
@@ -295,20 +408,21 @@ function startCheck(res, next, data, dbase){
 	var statuses = [];
 
 	dbase.any(`select * from songs where title = '` + data.title+`' and artist = '`+data.artist+`'`)
-					.then(returned => {
-						console.log(data);
-						console.log(returned);
-						if(returned.length == 0){
-							console.log(data.title + " " + data.artist);
-							//pass dbase along
-							addSong(res, next, data.title, data.artist, dbase);
-						}else{
-							//statuses.push({title: 'Already exists'})
-						}
-					})
-	 				.catch(err => {
-						statuses.push({title: err});
-					})
+		.then(returned => {
+			console.log(data);
+			console.log(returned);
+			if(returned.length == 0){
+				console.log(data.title + " " + data.artist);
+				//pass dbase along
+				addSong(res, next, data.title, data.artist, dbase);
+			}else{
+				//statuses.push({title: 'Already exists'})
+				console.log('song already exists')
+			}
+		})
+	 	.catch(err => {
+			statuses.push({title: err});
+		})
 }
 
 
@@ -330,7 +444,7 @@ function checkSongAlt(data, res, next, dbase){
 		.catch(err => {
 			return(err);
 		})
-	}, 300);
+	}, 500);
 	
 }
 
@@ -404,15 +518,15 @@ function addSongNum(artist, dbase){
 function getArtistsBySearch (req, res, next) {
 	let search = req.params.search;
 	let dbase;
-	if(item.artist.toLowerCase() < 'cliff richard'){
+	if(search.toLowerCase() < 'cliff richard'){
 	  dbase = db;
-	}else if(item.artist.toLowerCase() < 'hank williams'){
+	}else if(search.toLowerCase() < 'hank williams'){
 	  dbase = db1;
-	}else if(item.artist.toLowerCase() < 'leonard cohen'){
+	}else if(search.toLowerCase() < 'leonard cohen'){
 	  dbase = db2;
-	}else if(item.artist.toLowerCase() < 'peter gabriel'){
+	}else if(search.toLowerCase() < 'peter gabriel'){
 	  dbase = db3;
-	}else if(item.artist.toLowerCase() < 'tara lyn hart'){
+	}else if(search.toLowerCase() < 'tara lyn hart'){
 	  dbase = db4;
 	}else{
 	  console.log(6);
@@ -437,6 +551,7 @@ function getArtistsBySearch (req, res, next) {
 
 function getSongsBySearch (req, res, next) {
 	let search = req.params.search;
+	//Need to search every database
 	db.any(`select * from songs where title ilike '%` + search + `%'`)
 		.then(data => {
 			res.status(200)
@@ -456,9 +571,25 @@ function getSongsBySearch (req, res, next) {
 function editSong (req, res, next) {
 	let songs = req.body;
 	let statuses = [];
-	for(item in songs){
-		let id = songs[item].id;
-		db.none(`update songs set title = '` + songs[item].title + `', artist = '` + songs[item].artist + `', notes='` + songs[item].notes + `' where id = '` + songs[item].id+`'`)
+	for(let item of songs){
+		let id = item.id;
+
+		if(item.artist.toLowerCase() < 'chuck berry'){
+		  dbase = db;
+		}else if(item.artist.toLowerCase() < 'h'){
+		  dbase = db1;
+		}else if(item.artist.toLowerCase() < 'leann rimes'){
+		  dbase = db2;
+		}else if(item.artist.toLowerCase() < 'patty smyth'){
+		  dbase = db3;
+		}else if(item.artist.toLowerCase() < 't'){
+		  dbase = db4;
+		}else{
+		  console.log(6);
+		  dbase = db5;
+		}
+
+		dbase.none(`update songs set title = '` + songs[item].title + `', artist = '` + songs[item].artist + `', notes='` + songs[item].notes + `' where id = '` + songs[item].id+`'`)
 			.then( function() {
 				statuses.push({success: id})
 				if(statuses.length == songs.length){
@@ -471,7 +602,7 @@ function editSong (req, res, next) {
 				}
 			}
 
-			)
+			
 			.catch(err => {
 				return next(err);
 			})
@@ -481,6 +612,7 @@ function editSong (req, res, next) {
 }
 
 //Do find artist by song id then remove?  Shit idk
+//attach sid to song to make this possible maybe with .
 function removeSong (req, res, next){
 	console.log(req.params.ids);
 	var statuses = [];
@@ -519,9 +651,9 @@ function findArtistBySongId (id){
 		})
 }
 
-function removeArtist (artist){
+function removeArtist (artist, dbase){
 	statuses = [];
-	db.result(`delete from artists where name = '`+artist+`'`)
+	dbase.result(`delete from artists where name = '`+artist+`'`)
 		.then(result => {
 			console.log("Removing artist: " + artist);
 			statuses.push({artist: 'artist removed'});
@@ -532,13 +664,13 @@ function removeArtist (artist){
 }
 
 //refactor at some point into the other function
-function checkArtistHasSongs(artist){
-	db.any(`select * from songs where artist = '` + artist + `'`)
+function checkArtistHasSongs(artist, dbase){
+	dbase.any(`select * from songs where artist = '` + artist + `'`)
 		.then(data => {
 			console.log("Checking");
 			console.log(data);
 			if(data.length < 1){
-				removeArtist(artist);
+				removeArtist(artist, dbase);
 			}
 		})
 		.catch(err => {
@@ -546,13 +678,13 @@ function checkArtistHasSongs(artist){
 		})
 }
 
-function checkBlankArtists(){
-	db.any(`select * from artists`)
+function checkBlankArtists(dbase){
+	dbase.any(`select * from artists`)
 		.then(data => {
 			console.log(data);
 			for(item in data){
-				getSongsByArtist4Nums(data[item].name);
-				checkArtistHasSongs(data[item].name);
+				getSongsByArtist4Nums(data[item].name, dbase);
+				checkArtistHasSongs(data[item].name, dbase);
 			}
 		})
 		.catch(err => {
@@ -563,13 +695,18 @@ function checkBlankArtists(){
 
 function delayRemove(){
 	setInterval(function(){
-		checkBlankArtists()}
+	let dbarray = [db, db1, db2, db3, db4, db5];
+	for(let db of dbarray){
+		checkBlankArtists(db)
+	}
+
+	}
 	, 60 * 1000);
 }
 //Every half hour, checks for blank artists and erases them.
 
 
-function quickSort(arr) {
+function quickSortBySongNum(arr) {
   let ppoint = Math.floor(Math.random() * arr.length);
   let pnum = arr[ppoint].numSongs;
   console.log(pnum);
