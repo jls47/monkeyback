@@ -600,7 +600,7 @@ function editSong (req, res, next) {
 						message: 'update successful'
 					})
 				}
-			}
+			})
 
 			
 			.catch(err => {
