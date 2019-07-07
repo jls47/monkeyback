@@ -26,7 +26,6 @@ module.exports = {
 	getMostRecentSongs: getMostRecentSongs,
 	getAllSongs: getAllSongs,
 	getAllSongs1: getAllSongs1,
-	getOneSong: getOneSong,
 	getSongsByArtist: getSongsByArtist,
 	getAllArtists: getAllArtists,
 	addSong: addSong,
