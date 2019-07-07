@@ -21,12 +21,12 @@ const db3 = pgp(cs3);
 const db4 = pgp(cs4);
 const db5 = pgp(cs5);
 
-const $p = db.config.promise;
-const $p1 = db1.config.promise;
-const $p2 = db2.config.promise;
-const $p3 = db3.config.promise;
-const $p4 = db4.config.promise;
-const $p5 = db5.config.promise;
+const $p = db.$config.promise;
+const $p1 = db1.$config.promise;
+const $p2 = db2.$config.promise;
+const $p3 = db3.$config.promise;
+const $p4 = db4.$config.promise;
+const $p5 = db5.$config.promise;
 
 module.exports = {
 	getMostRecentSongs: getMostRecentSongs,
