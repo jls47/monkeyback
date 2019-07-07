@@ -21,6 +21,12 @@ const db3 = pgp(cs3);
 const db4 = pgp(cs4);
 const db5 = pgp(cs5);
 
+const $p = db.config.promise;
+const $p1 = db1.config.promise;
+const $p2 = db2.config.promise;
+const $p3 = db3.config.promise;
+const $p4 = db4.config.promise;
+const $p5 = db5.config.promise;
 
 module.exports = {
 	getMostRecentSongs: getMostRecentSongs,
@@ -136,7 +142,7 @@ function getAllSongs(req, res, next){
 }
 
 function getAllSongs1(req, res, next){
-	Promise.all([getAll(db), getAll(db1), getAll(db2), getAll(db3), getAll(db4), getAll(db5)])
+	Promise.all([all, all1, all2, all3, all4, all5])
 		.then(data => {
 			res.status(200)
 				.json({
@@ -150,6 +156,30 @@ function getAllSongs1(req, res, next){
 		})
 
 }
+
+const all = $p((resolve, reject) => {
+	resolve(getAll(db))
+})
+
+const all1 = $p1((resolve, reject) => {
+	resolve(getAll(db1))
+})
+
+const all2 = $p2((resolve, reject) => {
+	resolve(getAll(db2))
+})
+
+const all3 = $p3((resolve, reject) => {
+	resolve(getAll(db3))
+})
+
+const all4 = $p4((resolve, reject) => {
+	resolve(getAll(db4))
+})
+
+const all5 = $p5((resolve, reject) => {
+	resolve(getAll(db5))
+})
 
 function getAll (dbase) {
 	//concat data with data from other dbs
