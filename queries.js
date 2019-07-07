@@ -158,27 +158,63 @@ function getAllSongs1(req, res, next){
 }
 
 const all = $p((resolve, reject) => {
-	resolve(getAll(db))
+	db.any(`select * from songs`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
 })
 
 const all1 = $p1((resolve, reject) => {
-	resolve(getAll(db1))
+	db1.any(`select * from songs`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
 })
 
 const all2 = $p2((resolve, reject) => {
-	resolve(getAll(db2))
+	db2.any(`select * from songs`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
 })
 
 const all3 = $p3((resolve, reject) => {
-	resolve(getAll(db3))
+	db3.any(`select * from songs`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
 })
 
 const all4 = $p4((resolve, reject) => {
-	resolve(getAll(db4))
+	db4.any(`select * from songs`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
 })
 
 const all5 = $p5((resolve, reject) => {
-	resolve(getAll(db5))
+	db5.any(`select * from songs`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
 })
 
 function getAll (dbase) {
