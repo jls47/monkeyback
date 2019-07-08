@@ -432,31 +432,43 @@ function checkSong1(req, res, next){
 		        }
 		        console.log(item.artist.toLowerCase());
 		        if(item.artist.toLowerCase() < 'chuck berry'){
+		          console.log('lower than chuck');
 		          startCheck(res, next, item, db);
 		        }else if(item.artist.toLowerCase() < 'h'){
+		          console.log('lower than h');
 		          startCheck(res, next, item, db1);
 		        }else if(item.artist.toLowerCase() < 'leann rimes'){
+		          console.log('lower than leann');
 		          startCheck(res, next, item, db2);
 		        }else if(item.artist.toLowerCase() < 'patty smyth'){
+		          console.log('lower than patty');
 		          startCheck(res, next, item, db3);
 		        }else if(item.artist.toLowerCase() < 't'){
+		          console.log('lower than t');
 		          startCheck(res, next, item, db4);
 		        }else{
+		          console.log('highest');
 		          startCheck(res, next, item, db5);
 		        }
 
 			}else{
 				if(item.artist.toLowerCase() < 'chuck berry'){
+				  console.log('lower than chuck');
 		          checkSongAlt(res, next, item, db);
 		        }else if(item.artist.toLowerCase() < 'h'){
+		          console.log('lower than h');
 		          checkSongAlt(res, next, item, db1);
 		        }else if(item.artist.toLowerCase() < 'leann rimes'){
+		          console.log('lower than leann');
 		          checkSongAlt(res, next, item, db2);
 		        }else if(item.artist.toLowerCase() < 'patty smyth'){
+		          console.log('lower than patty');
 		          checkSongAlt(res, next, item, db3);
 		        }else if(item.artist.toLowerCase() < 't'){
+		          console.log('lower than t');
 		          checkSongAlt(res, next, item, db4);
 		        }else{
+		          console.log('highest');
 		          checkSongAlt(res, next, item, db5);
 		        }
 			}
@@ -465,7 +477,10 @@ function checkSong1(req, res, next){
 		
 	}
 	res.status(200)
-		.json({success: 'yes'});
+		.json({
+			success: 'yes'
+		});
+	
 }
 
 function startCheck(res, next, data, dbase){
@@ -474,7 +489,6 @@ function startCheck(res, next, data, dbase){
 
 	dbase.any(`select * from songs where title = '` + data.title+`' and artist = '`+data.artist+`'`)
 		.then(returned => {
-			console.log(data);
 			console.log(returned);
 			if(returned.length == 0){
 				console.log(data.title + " " + data.artist);
@@ -530,6 +544,7 @@ function addSong (res, next,  title, artist, dbase){
 	console.log(title + " adding " + artist);
 	dbase.none(`insert into songs(title, artist) values('`+title+`', '`+artist+`')`)
 		.then(data => {
+			console.log('song added');
 			//do something with the response status
 			checkArtist(artist, dbase);
 		})
