@@ -592,7 +592,7 @@ function addArtist (name, dbase) {
 }
 
 function addSongNum(artist, dbase){
-	dbase.none(`update artists set songnum = songnum + 1 where name = '`+artist+`'`)
+	dbase.none(`update artists set numsongs = numsongs + 1 where name = '`+artist+`'`)
 }
 
 function getArtistsBySearch (req, res, next) {
