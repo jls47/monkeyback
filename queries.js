@@ -142,7 +142,7 @@ function getAllSongs(req, res, next){
 }
 
 function getAllSongs1(req, res, next){
-	Promise.all([all(db), all(db1), all(db2), all(db3), all(db4), all(db5)])
+	Promise.all([all, all1, all2, all3, all4, all5])
 		.then(data => {
 			res.status(200)
 				.json({
@@ -157,8 +157,8 @@ function getAllSongs1(req, res, next){
 
 }
 
-const all = $p((resolve, reject, dbase) => {
-	dbase.any(`select * from songs`)
+const all = $p((resolve, reject) => {
+	db.any(`select * from songs`)
 		.then(data => {
 			resolve(data);
 		})
