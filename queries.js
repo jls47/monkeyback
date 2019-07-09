@@ -613,13 +613,51 @@ function getArtistsBySearch (req, res, next) {
 	  dbase = db5;
 	}
 
-	dbase.any(`select * from artists where name ilike '%` + search + `%'`)
+	res.status(200)
+		.json({
+			status: 'success',
+			data: data,
+			message: 'search successful'
+		})
+
+	let returnData = [];
+
+	db.any(`select * from artists where name ilike '%` + search + `%'`)
 		.then(data => {
-			res.status(200)
-				.json({
-					status: 'success',
-					data: data,
-					message: 'search successful'
+			returnData = returnData.concat(data);
+			db1.any(`select * from artists where name ilike '%` + search + `%'`)
+				.then(data => {
+					returnData = returnData.concat(data);
+					db2.any(`select * from artists where name ilike '%` + search + `%'`)
+						.then(data => {
+							returnData = returnData.concat(data);
+							db3.any(`select * from artists where name ilike '%` + search + `%'`)
+								.then(data => {
+									returnData = returnData.concat(data);
+									db4.any(`select * from artists where name ilike '%` + search + `%'`)
+										.then(data => {
+											returnData = returnData.concat(data);
+											db5.any(`select * from artists where name ilike '%` + search + `%'`)
+											res.status(200)
+												.json({
+													status: 'success',
+													data: quickSortBySongNum(returnData)
+												})
+										})
+										.catch(err => {
+											return next(err);
+										})
+								})
+								.catch(err => {
+									return next(err);
+								})
+						})
+						.catch(err => {
+							return next(err);
+						})
+				})
+				.catch(err => {
+					return next(err);
 				})
 		})
 		.catch(err => {
@@ -632,13 +670,44 @@ function getArtistsBySearch (req, res, next) {
 function getSongsBySearch (req, res, next) {
 	let search = req.params.search;
 	//Need to search every database
+	let returnData = [];
+	
 	db.any(`select * from songs where title ilike '%` + search + `%'`)
 		.then(data => {
-			res.status(200)
-				.json({
-					status: 'success',
-					data: data,
-					message: 'search successful'
+			returnData = returnData.concat(data);
+			db1.any(`select * from songs where title ilike '%` + search + `%'`)
+				.then(data => {
+					returnData = returnData.concat(data);
+					db2.any(`select * from songs where title ilike '%` + search + `%'`)
+						.then(data => {
+							returnData = returnData.concat(data);
+							db3.any(`select * from songs where title ilike '%` + search + `%'`)
+								.then(data => {
+									returnData = returnData.concat(data);
+									db4.any(`select * from songs where title ilike '%` + search + `%'`)
+										.then(data => {
+											returnData = returnData.concat(data);
+											db5.any(`select * from songs where title ilike '%` + search + `%'`)
+											res.status(200)
+												.json({
+													status: 'success',
+													data: returnData
+												})
+										})
+										.catch(err => {
+											return next(err);
+										})
+								})
+								.catch(err => {
+									return next(err);
+								})
+						})
+						.catch(err => {
+							return next(err);
+						})
+				})
+				.catch(err => {
+					return next(err);
 				})
 		})
 		.catch(err => {
