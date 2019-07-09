@@ -636,7 +636,7 @@ function getArtistsBySearch (req, res, next) {
 											res.status(200)
 												.json({
 													status: 'success',
-													data: quickSortBySongNum(returnData).reverse();
+													data: quickSortBySongNum(returnData).reverse()
 												})
 										})
 										.catch(err => {
