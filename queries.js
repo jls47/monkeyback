@@ -852,15 +852,15 @@ function delayRemove(){
 
 function quickSortBySongNum(arr) {
   let ppoint = Math.floor(Math.random() * arr.length);
-  let pnum = arr[ppoint].numSongs;
+  let pnum = arr[ppoint].numsongs;
   console.log(pnum);
   let left = [];
   let right = [];
   let middle = [];
   for(let i = 0; i < arr.length; i++){
-    if(arr[i].numSongs > pnum){
+    if(arr[i].numsongs > pnum){
       right.push(arr[i]);
-    }else if(arr[i].numSongs < pnum){
+    }else if(arr[i].numsongs < pnum){
       left.push(arr[i]);
     }else{
       middle.push(arr[i]);
