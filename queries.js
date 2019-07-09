@@ -636,7 +636,7 @@ function getArtistsBySearch (req, res, next) {
 											res.status(200)
 												.json({
 													status: 'success',
-													data: quickSortBySongNum(returnData)
+													data: quickSortBySongNum(returnData).reverse();
 												})
 										})
 										.catch(err => {
@@ -853,7 +853,6 @@ function delayRemove(){
 function quickSortBySongNum(arr) {
   let ppoint = Math.floor(Math.random() * arr.length);
   let pnum = arr[ppoint].numsongs;
-  console.log(pnum);
   let left = [];
   let right = [];
   let middle = [];
