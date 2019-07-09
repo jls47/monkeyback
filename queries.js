@@ -631,6 +631,7 @@ function getArtistsBySearch (req, res, next) {
 									db4.any(`select * from artists where name ilike '%` + search + `%'`)
 										.then(data => {
 											returnData = returnData.concat(data);
+											console.log(quickSortBySongNum(returnData));
 											db5.any(`select * from artists where name ilike '%` + search + `%'`)
 											res.status(200)
 												.json({
