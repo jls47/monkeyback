@@ -868,11 +868,11 @@ function quickSortBySongNum(arr) {
   }
   
   if(left.length > 1 && right.length > 1){
-    return quickSort(left).concat(middle.concat(quickSort(right)))
+    return quickSortBySongNum(left).concat(middle.concat(quickSort(right)))
   }else if(left.length <= 1 && right.length > 1){
     return left.concat(middle.concat(quickSort(right)))
   }else if(left.length > 1 && right.length <= 1){
-    return quickSort(left).concat(middle.concat(right))
+    return quickSortBySongNum(left).concat(middle.concat(right))
   }else{
     return left.concat(middle.concat(right))
   }
