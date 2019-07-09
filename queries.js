@@ -613,12 +613,6 @@ function getArtistsBySearch (req, res, next) {
 	  dbase = db5;
 	}
 
-	res.status(200)
-		.json({
-			status: 'success',
-			data: data,
-			message: 'search successful'
-		})
 
 	let returnData = [];
 
