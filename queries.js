@@ -264,7 +264,7 @@ function getSongsByArtist (req, res, next) {
 
 function getAllArtists (req, res, next) {
 	//concat data with data from other dbs
-	db.any(`select * from artists`)
+	Promise.all([alla, alla1, alla2, alla3, alla4, alla5])
 		.then(data => {
 			res.status(200)
 				.json({
@@ -277,6 +277,66 @@ function getAllArtists (req, res, next) {
 			return next(err);
 		})
 }
+
+const alla = $p((resolve, reject) => {
+	db.any(`select * from artists`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
+})
+
+const alla1 = $p1((resolve, reject) => {
+	db1.any(`select * from artists`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
+})
+
+const alla2 = $p2((resolve, reject) => {
+	db2.any(`select * from artists`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
+})
+
+const alla3 = $p3((resolve, reject) => {
+	db3.any(`select * from artists`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
+})
+
+const alla4 = $p4((resolve, reject) => {
+	db4.any(`select * from artists`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
+})
+
+const alla5 = $p5((resolve, reject) => {
+	db5.any(`select * from artists`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
+})
 
 function getSongsByLetter(req, res, next){
 	//concat data with data from other dbs
