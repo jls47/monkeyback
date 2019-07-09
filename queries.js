@@ -868,9 +868,9 @@ function quickSortBySongNum(arr) {
   }
   
   if(left.length > 1 && right.length > 1){
-    return quickSortBySongNum(left).concat(middle.concat(quickSort(right)))
+    return quickSortBySongNum(left).concat(middle.concat(quickSortBySongNum(right)))
   }else if(left.length <= 1 && right.length > 1){
-    return left.concat(middle.concat(quickSort(right)))
+    return left.concat(middle.concat(quickSortBySongNum(right)))
   }else if(left.length > 1 && right.length <= 1){
     return quickSortBySongNum(left).concat(middle.concat(right))
   }else{
