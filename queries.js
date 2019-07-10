@@ -234,16 +234,16 @@ function getSongsByArtist (req, res, next) {
 	let artist = req.params.artist;
 	let dbase;
 	let lowArtist = artist.toLowerCase();
-	if(lowArtist < "t"){
-		dbase = db4;
-	}else if(lowArtist < "patty smyth"){
-		dbase = db3;
-	}else if(lowArtist < "leann rimes"){
-		dbase = db2;
+	if(lowArtist < "chuck berry"){
+		dbase = db;
 	}else if(lowArtist < "h"){
 		dbase = db1;
-	}else if(lowArtist < "chuck berry"){
-		dbase = db;
+	}else if(lowArtist < "leann rimes"){
+		dbase = db2;
+	}else if(lowArtist < "patty smyth"){
+		dbase = db3;
+	}else if(lowArtist < "t"){
+		dbase = db4;
 	}else{
 		dbase = db5;
 	}
