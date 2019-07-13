@@ -99,10 +99,12 @@ function getMostRecentSongs1(req, res, next){
 	Promise.all([recents, recents1, recents2, recents3, recents4, recents5])
 		.then(data => {
 			console.log(data);
+			let newArr = data.data[0].concat(data[1], data[2], data[3], data[4], data[5]);
+			let newData = quickSortBySongId(newArr).reverse();
 			res.status(200)
 				.json({
 					status: 'success',
-					data: data,
+					data: newData,
 					message: 'retrieval successful'
 				})
 		})
