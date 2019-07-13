@@ -30,6 +30,7 @@ const $p5 = db5.$config.promise;
 
 module.exports = {
 	getMostRecentSongs: getMostRecentSongs,
+	getMostRecentSongs1: getMostRecentSongs1,
 	getAllSongs: getAllSongs,
 	getAllSongs1: getAllSongs1,
 	getSongsByArtist: getSongsByArtist,
@@ -932,6 +933,33 @@ function quickSortBySongNum(arr) {
     return left.concat(middle.concat(quickSortBySongNum(right)))
   }else if(left.length > 1 && right.length <= 1){
     return quickSortBySongNum(left).concat(middle.concat(right))
+  }else{
+    return left.concat(middle.concat(right))
+  }
+}
+
+function quickSortBySongId(arr){
+  let ppoint = Math.floor(Math.random() * arr.length);
+  let pnum = arr[ppoint].id;
+  let left = [];
+  let right = [];
+  let middle = [];
+  for(let i = 0; i < arr.length; i++){
+    if(arr[i].id > pnum){
+      right.push(arr[i]);
+    }else if(arr[i].id < pnum){
+      left.push(arr[i]);
+    }else{
+      middle.push(arr[i]);
+    }
+  }
+  
+  if(left.length > 1 && right.length > 1){
+    return quickSortBySongId(left).concat(middle.concat(quickSortBySongId(right)))
+  }else if(left.length <= 1 && right.length > 1){
+    return left.concat(middle.concat(quickSortBySongId(right)))
+  }else if(left.length > 1 && right.length <= 1){
+    return quickSortBySongId(left).concat(middle.concat(right))
   }else{
     return left.concat(middle.concat(right))
   }

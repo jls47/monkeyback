@@ -10,6 +10,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/api/songs/r/', db.getMostRecentSongs);
+router.get('/api/songs/r1/', db.getMostRecentSongs1);
 router.get('/api/songs', db.getAllSongs);
 router.get('/api/songs1', db.getAllSongs1);
 router.post('/api/songs/', db.checkSong);
