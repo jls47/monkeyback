@@ -96,8 +96,9 @@ function createUser(req, res, next){
 }
 
 function getMostRecentSongs1(req, res, next){
-	Promise.all([recents(db), recents(db1), recents(db2), recents(db3), recents(db4), recents(db5)])
+	Promise.all([recents, recents1, recents2, recents3, recents4, recents5])
 		.then(data => {
+			console.log(data);
 			res.status(200)
 				.json({
 					status: 'success',
@@ -110,9 +111,69 @@ function getMostRecentSongs1(req, res, next){
 		})
 }
 
+const recents = $p((resolve, reject) => {
+	db.any(`select * from songs order by id desc`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
+})
+
+const recents1 = $p1((resolve, reject) => {
+	db1.any(`select * from songs order by id desc`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
+})
+
+const recents2 = $p2((resolve, reject) => {
+	db2.any(`select * from songs order by id desc`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
+})
+
+const recents3 = $p3((resolve, reject) => {
+	db3.any(`select * from songs order by id desc`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
+})
+
+const recents4 = $p4((resolve, reject) => {
+	db4.any(`select * from songs order by id desc`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
+})
+
+const recents5 = $p5((resolve, reject) => {
+	db5.any(`select * from songs order by id desc`)
+		.then(data => {
+			resolve(data);
+		})
+		.catch(e => {
+			resolve(e);
+		})
+})
+
 function getMostRecentSongs(req, res, next){
 	//concat data with data from other dbs
-	dbase.any(`select * from songs order by id desc limit 3`)
+	dbase.any(`select * from songs order by id desc`)
 		.then(data => {
 			//return data;
 			res.status(200)
