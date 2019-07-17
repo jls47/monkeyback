@@ -10,11 +10,8 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/api/songs/r/', db.getMostRecentSongs);
-router.get('/api/songs/r1/', db.getMostRecentSongs1);
 router.get('/api/songs', db.getAllSongs);
-router.get('/api/songs1', db.getAllSongs1);
 router.post('/api/songs/', db.checkSong);
-router.post('/api/song1/', db.checkSong1);
 router.get('/api/songs/s/:search', db.getSongsBySearch);
 router.get('/api/songs/a/:artist', db.getSongsByArtist);
 router.put('/api/songs/', db.editSong);
