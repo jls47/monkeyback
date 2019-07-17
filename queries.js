@@ -30,14 +30,11 @@ const $p5 = db5.$config.promise;
 
 module.exports = {
 	getMostRecentSongs: getMostRecentSongs,
-	getMostRecentSongs1: getMostRecentSongs1,
 	getAllSongs: getAllSongs,
-	getAllSongs1: getAllSongs1,
 	getSongsByArtist: getSongsByArtist,
 	getAllArtists: getAllArtists,
 	addSong: addSong,
 	checkSong: checkSong,
-	checkSong1: checkSong1,
 	getArtistsBySearch: getArtistsBySearch,
 	getSongsBySearch: getSongsBySearch,
 	editSong: editSong,
@@ -95,16 +92,17 @@ function createUser(req, res, next){
 	})
 }
 
-function getMostRecentSongs1(req, res, next){
+function getMostRecentSongs(req, res, next){
 	Promise.all([recents, recents1, recents2, recents3, recents4, recents5])
 		.then(data => {
 			console.log(data);
 			let newArr = data[0].concat(data[1], data[2], data[3], data[4], data[5]);
 			let newData = quickSortBySongId(newArr).reverse();
+			let shortData = newData.slice(1, 15);
 			res.status(200)
 				.json({
 					status: 'success',
-					data: newData,
+					data: shortData,
 					message: 'retrieval successful'
 				})
 		})
@@ -173,45 +171,14 @@ const recents5 = $p5((resolve, reject) => {
 		})
 })
 
-function getMostRecentSongs(req, res, next){
-	//concat data with data from other dbs
-	dbase.any(`select * from songs order by id desc`)
-		.then(data => {
-			//return data;
-			res.status(200)
-				.json({
-					status: 'success',
-					data: data,
-					message: 'retrieval successful'
-				})
-		})
-		.catch(err => {
-			return err;
-		})
-}
-
 function getAllSongs(req, res, next){
-	db.any(`select * from songs`)
-		.then(data => {
-			res.status(200)
-				.json({
-					status: 'success',
-					data: data,
-					message: 'retrieval successful'
-				})
-		})
-		.catch(err => {
-			return next(err);
-		})
-}
-
-function getAllSongs1(req, res, next){
 	Promise.all([all, all1, all2, all3, all4, all5])
 		.then(data => {
+			let newData = data[0].concat(data[1], data[2], data[3], data[4], data[5])
 			res.status(200)
 				.json({
 					status: 'success',
-					data: data,
+					data: newData,
 					message: 'retrieval successful'
 				})
 		})
@@ -330,10 +297,11 @@ function getAllArtists (req, res, next) {
 	//concat data with data from other dbs
 	Promise.all([alla, alla1, alla2, alla3, alla4, alla5])
 		.then(data => {
+			let newData = data[0].concat(data[1], data[2], data[3], data[4], data[5])
 			res.status(200)
 				.json({
 					status: 'success',
-					data: data,
+					data: newData,
 					message: 'retrieval successful'
 				})
 		})
@@ -491,53 +459,6 @@ function setSongNums (artist, length, dbase){
 //add responses to functions that need it
 
 function checkSong(req, res, next){
-
-	//concat data with data from other dbs
-	let songs = JSON.parse(req.body.data);
-	let artists = [];
-	for(let item of songs){
-		if(item.title.length != 0 && item.artist.length != 0){
-			if(artists.indexOf(item.artist) == -1){
-
-				let artistPost = item.artist.indexOf("'");
-		        let songPost = item.title.indexOf("'");
-
-		        if(artistPost != -1){
-		          item.artist = item.artist.slice(0, artistPost) + "'" + item.artist.slice(artistPost);
-		        }
-
-		        if(songPost != -1){
-		          item.title = item.title.slice(0, songPost) + "'" + item.title.slice(songPost);
-		        }
-
-		        startCheck(res, next, item, db);
-		        
-
-			}else{
-
-				let artistPost = item.artist.indexOf("'");
-			    let songPost = item.title.indexOf("'");
-
-			    if(artistPost != -1){
-			      item.artist = item.artist.slice(0, artistPost) + "'" + item.artist.slice(artistPost);
-			    }
-
-			    if(songPost != -1){
-			      item.title = item.title.slice(0, songPost) + "'" + item.title.slice(songPost);
-			    }
-
-			    checkSongAlt(res, next, item, db);
-		        
-			}
-			artists.push(item.artist);
-		}
-		
-	}
-	res.status(200)
-		.json({success: 'yes'});
-}
-
-function checkSong1(req, res, next){
 
 	//concat data with data from other dbs
 	let songs = JSON.parse(req.body.data);
@@ -838,6 +759,7 @@ function getSongsBySearch (req, res, next) {
 
 function editSong (req, res, next) {
 	let songs = req.body;
+	let dbase;
 	let statuses = [];
 	for(let item of songs){
 		let id = item.id;
@@ -882,10 +804,12 @@ function editSong (req, res, next) {
 //Do find artist by song id then remove?  Shit idk
 //attach sid to song to make this possible maybe with .
 function removeSong (req, res, next){
-	console.log(req.params.ids);
+	console.log(req.params.data.id1);
 	var statuses = [];
 	var pass = 0;
-	var ids = req.params.ids.split(',');
+	var id1s = req.params.ids.split(',');
+	let dbase;
+
 	for(var id of req.params.ids.split(',')){
 		console.log(id);
 		console.log(`delete from songs where id = ` + id);
