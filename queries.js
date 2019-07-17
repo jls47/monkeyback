@@ -298,6 +298,7 @@ function getAllArtists (req, res, next) {
 	Promise.all([alla, alla1, alla2, alla3, alla4, alla5])
 		.then(data => {
 			let newData = data[0].concat(data[1], data[2], data[3], data[4], data[5])
+			let allData = quickSortBySongNum(newData).reverse();
 			res.status(200)
 				.json({
 					status: 'success',
