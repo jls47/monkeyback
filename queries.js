@@ -643,22 +643,6 @@ function addSongNum(artist, dbase){
 
 function getArtistsBySearch (req, res, next) {
 	let search = req.params.search;
-	let dbase;
-	if(search.toLowerCase() < 'cliff richard'){
-	  dbase = db;
-	}else if(search.toLowerCase() < 'hank williams'){
-	  dbase = db1;
-	}else if(search.toLowerCase() < 'leonard cohen'){
-	  dbase = db2;
-	}else if(search.toLowerCase() < 'peter gabriel'){
-	  dbase = db3;
-	}else if(search.toLowerCase() < 'tara lyn hart'){
-	  dbase = db4;
-	}else{
-	  console.log(6);
-	  dbase = db5;
-	}
-
 
 	let returnData = [];
 
@@ -757,46 +741,51 @@ function getSongsBySearch (req, res, next) {
 }
 
 //if editing in new artist then add artist
+//receives nested array
 
 function editSong (req, res, next) {
-	let songs = req.body;
+	let data = req.body;
+	console.log(data);
 	let dbase;
 	let statuses = [];
-	for(let item of songs){
-		let id = item.id;
+	for(let songs of data){
+		for(let item of songs){
+			console.log(item);
+			let id = item.id;
 
-		if(item.artist.toLowerCase() < 'chuck berry'){
-		  dbase = db;
-		}else if(item.artist.toLowerCase() < 'h'){
-		  dbase = db1;
-		}else if(item.artist.toLowerCase() < 'leann rimes'){
-		  dbase = db2;
-		}else if(item.artist.toLowerCase() < 'patty smyth'){
-		  dbase = db3;
-		}else if(item.artist.toLowerCase() < 't'){
-		  dbase = db4;
-		}else{
-		  console.log(6);
-		  dbase = db5;
+			if(item.artist.toLowerCase() < 'chuck berry'){
+			  dbase = db;
+			}else if(item.artist.toLowerCase() < 'h'){
+			  dbase = db1;
+			}else if(item.artist.toLowerCase() < 'leann rimes'){
+			  dbase = db2;
+			}else if(item.artist.toLowerCase() < 'patty smyth'){
+			  dbase = db3;
+			}else if(item.artist.toLowerCase() < 't'){
+			  dbase = db4;
+			}else{
+			  console.log(6);
+			  dbase = db5;
+			}
+
+			dbase.none(`update songs set title = '` + songs[item].title + `', artist = '` + songs[item].artist + `', notes='` + songs[item].notes + `' where id = '` + songs[item].id+`'`)
+				.then( function() {
+					statuses.push({success: id})
+					if(statuses.length == songs.length){
+						res.status(200)
+						.json({
+							status: 'success',
+							data: statuses,
+							message: 'update successful'
+						})
+					}
+				})
+
+				
+				.catch(err => {
+					return next(err);
+				})
 		}
-
-		dbase.none(`update songs set title = '` + songs[item].title + `', artist = '` + songs[item].artist + `', notes='` + songs[item].notes + `' where id = '` + songs[item].id+`'`)
-			.then( function() {
-				statuses.push({success: id})
-				if(statuses.length == songs.length){
-					res.status(200)
-					.json({
-						status: 'success',
-						data: statuses,
-						message: 'update successful'
-					})
-				}
-			})
-
-			
-			.catch(err => {
-				return next(err);
-			})
 	}
 	delayRemove();
 	
