@@ -768,7 +768,7 @@ function editSong (req, res, next) {
 			  dbase = db5;
 			}
 
-			dbase.none(`update songs set title = '` + songs[item].title + `', artist = '` + songs[item].artist + `', notes='` + songs[item].notes + `' where id = '` + songs[item].id+`'`)
+			dbase.none(`update songs set title = '` + item.title + `', artist = '` + item.artist + `', notes='` + item.notes + `' where id = '` + item.id+`'`)
 				.then( function() {
 					statuses.push({success: id})
 					if(statuses.length == songs.length){
