@@ -29,8 +29,9 @@ Patty Smyth-<T: 5
 
 T-Beyond: 6
 
-Navy: 2
-Rose: 3
-Aqua: 4
-Gray: 5
-Maroon: 6
+Database: 1
+Cyan: 2
+Green: 3
+Puce: 4
+Charcoal: 5
+Brown: 6

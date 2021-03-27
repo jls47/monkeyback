@@ -6,12 +6,12 @@ const options = {
 };
 
 const pgp = require('pg-promise')(options);
-const cs0 = 'postgres://vuwumxkxalrbzq:b711534d337515a892fb006d00d28d9e4b7ea23b7beea0a0a29f82dfc0f85183@ec2-174-129-10-235.compute-1.amazonaws.com:5432/datgbuhvg1etav';
-const cs1 = 'postgres://ruualbbvnlcyjo:fef64ebccd1dd6821e8773af09c8e9e1a92dad51584bb6dbaae14fbbd4b5b270@ec2-174-129-29-101.compute-1.amazonaws.com:5432/d1pqf90fuq8c46';
-const cs2 = 'postgres://lmbomgkhybtugl:d7c8f8afb46c9e83c1ef5d2a97ee9554f41284f986c718f87c526872326d17c7@ec2-50-19-221-38.compute-1.amazonaws.com:5432/d8p5bpm6j9bj0q';
-const cs3 = 'postgres://vvunoatpwmtfhc:3bad7c7626309d6461387916f9b7da7738b990a01c1037316e738e7b60f42721@ec2-174-129-29-101.compute-1.amazonaws.com:5432/demku8g0oqrsrh';
-const cs4 = 'postgres://osslvrbgpiyfis:5f7f117c7bfbb0461024836071956c226c540424f9ebb9bb9e2dfe18df859bbd@ec2-107-20-185-16.compute-1.amazonaws.com:5432/dbi0i064kohqv6';
-const cs5 = 'postgres://pvpklqppikggwh:336395952ce7d3ee3d5b53b40f9760001cad43ff1f193190b030a47e73fa1284@ec2-174-129-29-101.compute-1.amazonaws.com:5432/de4cvce8djbd4p';
+const cs0 = 'postgres://mwtdzsgrithyrr:59fcae4e073b2083e970d926ede7615fd1eea54d6780bd63afdb40bf1f4c6ad8@ec2-54-167-168-52.compute-1.amazonaws.com:5432/d1ngj9b66pilqp';
+const cs1 = 'postgres://rvxyvotsvijvdm:393b223dd10e13ae4f5966466519a452b11e9b0b08b0ea0f3399740e5b847ecc@ec2-54-167-168-52.compute-1.amazonaws.com:5432/d35f0nfbrhmg7u';
+const cs2 = 'postgres://wslpibwtvtdwnv:fa448d2b0fde6a2d745a954a02c4a37b2856979882a640e67c35986d9c69b403@ec2-54-167-168-52.compute-1.amazonaws.com:5432/dbokaasteuvdil';
+const cs3 = 'postgres://altctcpabtwrrt:59e018d340499f49cc8f0d860cd6cfeaefc7d9aeb33f876b3e498fbb5995402d@ec2-54-167-168-52.compute-1.amazonaws.com:5432/de4bb1ghv634us';
+const cs4 = 'postgres://fwxrrcrtdlehji:179ee8c2f87182ff503f62a5c3a8475b961c76927832af804877331332efa760@ec2-54-167-168-52.compute-1.amazonaws.com:5432/d4ed3hf906m78i';
+const cs5 = 'postgres://rhrgifojnudpsg:3bb3a85508160ecaee36d994b47b0f08a430c192ff0b600d5ddec43771fba701@ec2-54-167-168-52.compute-1.amazonaws.com:5432/dd7nhhkqsd5ju8';
 const connectionString = 'postgres://monkey:monkey@localhost:5432/songs'
 //const db = pgp(connectionString);
 const db = pgp(cs0);
