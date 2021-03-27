@@ -5,6 +5,68 @@ const options = {
 	promiseLib: promise
 };
 
+let ssl = {rejectUnauthorized: false};
+
+const config0 = {
+	host: 'ec2-54-167-168-52.compute-1.amazonaws.com',
+	port: 5432,
+	database: 'd1ngj9b66pilqp',
+	user: 'mwtdzsgrithyrr',
+	password: '59fcae4e073b2083e970d926ede7615fd1eea54d6780bd63afdb40bf1f4c6ad8',
+	max: 30, // use up to 30 connections
+	ssl:ssl
+};
+
+const config1 = {
+	host: 'ec2-54-167-168-52.compute-1.amazonaws.com',
+	port: 5432,
+	database: 'd35f0nfbrhmg7u',
+	user: 'rvxyvotsvijvdm',
+	password: '393b223dd10e13ae4f5966466519a452b11e9b0b08b0ea0f3399740e5b847ecc',
+	max: 30, // use up to 30 connections
+	ssl:ssl
+};
+
+const config2 = {
+	host: 'ec2-54-167-168-52.compute-1.amazonaws.com',
+	port: 5432,
+	database: 'dbokaasteuvdil',
+	user: 'wslpibwtvtdwnv',
+	password: 'fa448d2b0fde6a2d745a954a02c4a37b2856979882a640e67c35986d9c69b403',
+	max: 30, // use up to 30 connections
+	ssl:ssl
+};
+
+const config3 = {
+	host: 'ec2-54-167-168-52.compute-1.amazonaws.com',
+	port: 5432,
+	database: 'de4bb1ghv634us',
+	user: 'altctcpabtwrrt',
+	password: '59e018d340499f49cc8f0d860cd6cfeaefc7d9aeb33f876b3e498fbb5995402d',
+	max: 30, // use up to 30 connections
+	ssl:ssl
+};
+
+const config4 = {
+	host: 'ec2-54-167-168-52.compute-1.amazonaws.com',
+	port: 5432,
+	database: 'd4ed3hf906m78i',
+	user: 'fwxrrcrtdlehji',
+	password: '179ee8c2f87182ff503f62a5c3a8475b961c76927832af804877331332efa760',
+	max: 30, // use up to 30 connections
+	ssl:ssl
+};
+
+const config5 = {
+	host: 'ec2-54-167-168-52.compute-1.amazonaws.com',
+	port: 5432,
+	database: 'dd7nhhkqsd5ju8',
+	user: 'rhrgifojnudpsg',
+	password: '3bb3a85508160ecaee36d994b47b0f08a430c192ff0b600d5ddec43771fba701',
+	max: 30, // use up to 30 connections
+	ssl:ssl
+};
+
 const pgp = require('pg-promise')(options);
 const cs0 = 'postgres://mwtdzsgrithyrr:59fcae4e073b2083e970d926ede7615fd1eea54d6780bd63afdb40bf1f4c6ad8@ec2-54-167-168-52.compute-1.amazonaws.com:5432/d1ngj9b66pilqp';
 const cs1 = 'postgres://rvxyvotsvijvdm:393b223dd10e13ae4f5966466519a452b11e9b0b08b0ea0f3399740e5b847ecc@ec2-54-167-168-52.compute-1.amazonaws.com:5432/d35f0nfbrhmg7u';
@@ -14,12 +76,12 @@ const cs4 = 'postgres://fwxrrcrtdlehji:179ee8c2f87182ff503f62a5c3a8475b961c76927
 const cs5 = 'postgres://rhrgifojnudpsg:3bb3a85508160ecaee36d994b47b0f08a430c192ff0b600d5ddec43771fba701@ec2-54-167-168-52.compute-1.amazonaws.com:5432/dd7nhhkqsd5ju8';
 const connectionString = 'postgres://monkey:monkey@localhost:5432/songs'
 //const db = pgp(connectionString);
-const db = pgp(cs0);
-const db1 = pgp(cs1);
-const db2 = pgp(cs2);
-const db3 = pgp(cs3);
-const db4 = pgp(cs4);
-const db5 = pgp(cs5);
+const db = pgp(config0);
+const db1 = pgp(config1);
+const db2 = pgp(config2);
+const db3 = pgp(config3);
+const db4 = pgp(config4);
+const db5 = pgp(config5);
 
 const $p = db.$config.promise;
 const $p1 = db1.$config.promise;

@@ -3,11 +3,12 @@ create table songs(ID SERIAL PRIMARY KEY not null unique, title VARCHAR not null
 
 insert into songs(title, artist, notes) values ('I Want You to Want Me', 'Cheap Trick', null), ('Scenario', 'A Tribe Called Quest', null), ('Fastlove', 'George Michael', null), ('Freya', 'The Sword', 'This one is weird');
 
+create table artists(ID SERIAL PRIMARY KEY not null unique, name VARCHAR not null, SID int not null default 0, numsongs int not null default 0);
+
 insert into artists (name) values ('Cheap Trick'), ('A Tribe Called Quest'), ('George Michael'), ('The Sword');
 
 insert 
 
-create table artists(ID SERIAL PRIMARY KEY not null unique, name VARCHAR not null, SID int not null default 0, numsongs int not null default 0);
 
 create user monkey with password 'monkey';
 
