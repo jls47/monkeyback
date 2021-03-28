@@ -160,7 +160,7 @@ function getMostRecentSongs(req, res, next){
 			console.log(data);
 			let newArr = data[0].concat(data[1], data[2], data[3], data[4], data[5]);
 			let newData = quickSortBySongId(newArr).reverse();
-			let shortData = newData.slice(1, 15);
+			let shortData = newData.slice(0, 15);
 			res.status(200)
 				.json({
 					status: 'success',
